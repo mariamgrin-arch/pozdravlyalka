@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Поздравлялка 2.0</title>
 
   <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
@@ -69,6 +70,7 @@
 <body>
 
 <div class="box">
+
   <h1>🎂 Поздравлялка 2.0</h1>
 
   <p>
@@ -80,23 +82,33 @@
     Получить дни рождения друзей
   </button>
 
-  <div id="status">Инициализируем приложение VK...</div>
+  <div id="status">
+    Инициализируем приложение VK...
+  </div>
 
   <div id="friends"></div>
+
 </div>
 
+
 <script>
+
   const APP_ID = 54728607;
+  const API_VERSION = "5.199";
 
   const startButton = document.getElementById("start");
   const status = document.getElementById("status");
   const friendsBox = document.getElementById("friends");
 
-  // Сначала инициализируем VK Bridge.
-  // Это происходит сразу при открытии приложения,
-  // а не после нажатия кнопки.
+
+  // --------------------------------------------------
+  // ИНИЦИАЛИЗАЦИЯ VK
+  // --------------------------------------------------
+
   async function initApp() {
+
     try {
+
       status.textContent = "Подключаемся к VK...";
 
       const result = await vkBridge.send("VKWebAppInit");
@@ -109,17 +121,23 @@
       startButton.disabled = false;
 
     } catch (error) {
+
       console.error("Ошибка VKWebAppInit:", error);
 
-      status.innerHTML =
-        "<b>Не удалось подключить приложение к VK.</b><br>" +
-        "Ошибка: " +
-        escapeHtml(error.message || String(error));
+      showError(
+        "Не удалось подключить приложение к VK.",
+        error
+      );
     }
   }
 
 
+  // --------------------------------------------------
+  // ПОЛУЧЕНИЕ ДРУЗЕЙ
+  // --------------------------------------------------
+
   async function start() {
+
     startButton.disabled = true;
     friendsBox.innerHTML = "";
 
@@ -128,111 +146,318 @@
       status.textContent =
         "Запрашиваем разрешение на список друзей...";
 
-      const auth = await vkBridge.send("VKWebAppGetAuthToken", {
-        app_id: APP_ID,
-        scope: "friends"
-      });
+
+      // Получаем пользовательский токен
+      const auth = await vkBridge.send(
+        "VKWebAppGetAuthToken",
+        {
+          app_id: APP_ID,
+          scope: "friends"
+        }
+      );
+
+
+      console.log("Ответ авторизации VK:", auth);
+
 
       if (!auth || !auth.access_token) {
-        throw new Error("VK не выдал токен доступа.");
+
+        throw new Error(
+          "VK не выдал токен доступа."
+        );
       }
 
-      status.textContent = "Получаем список друзей...";
 
-      const result = await vkBridge.send("VKWebAppCallAPIMethod", {
-        method: "friends.get",
-        params: {
-          fields: "bdate,domain",
-          count: 5000
+      status.textContent =
+        "Получаем список друзей...";
+
+
+      // Получаем друзей через VK API
+      const result = await vkBridge.send(
+        "VKWebAppCallAPIMethod",
+        {
+          method: "friends.get",
+
+          params: {
+            access_token: auth.access_token,
+            v: API_VERSION,
+
+            fields: "bdate,domain",
+            count: 5000
+          }
         }
-      });
+      );
+
+
+      console.log("Ответ friends.get:", result);
+
 
       if (!result || !result.response) {
-        throw new Error("VK не вернул список друзей.");
+
+        throw result || {
+          message: "VK не вернул список друзей."
+        };
       }
 
-      const friends = result.response.items || [];
 
-      const withBirthday = friends.filter(friend => friend.bdate);
+      const friends =
+        result.response.items || [];
+
+
+      // --------------------------------------------------
+      // ОСТАВЛЯЕМ ТОЛЬКО ДРУЗЕЙ С ДАТОЙ РОЖДЕНИЯ
+      // --------------------------------------------------
+
+      const withBirthday =
+        friends.filter(friend => friend.bdate);
+
+
+      // --------------------------------------------------
+      // СОРТИРОВКА ПО ДНЮ И МЕСЯЦУ
+      // --------------------------------------------------
 
       withBirthday.sort((a, b) => {
-        const aParts = a.bdate.split(".");
-        const bParts = b.bdate.split(".");
 
-        const aDay = Number(aParts[0]);
-        const aMonth = Number(aParts[1]);
+        const aParts =
+          a.bdate.split(".");
 
-        const bDay = Number(bParts[0]);
-        const bMonth = Number(bParts[1]);
+        const bParts =
+          b.bdate.split(".");
 
-        return (aMonth * 100 + aDay) -
-               (bMonth * 100 + bDay);
+
+        const aDay =
+          Number(aParts[0]);
+
+        const aMonth =
+          Number(aParts[1]);
+
+
+        const bDay =
+          Number(bParts[0]);
+
+        const bMonth =
+          Number(bParts[1]);
+
+
+        return (
+          (aMonth * 100 + aDay) -
+          (bMonth * 100 + bDay)
+        );
+
       });
 
+
+      // --------------------------------------------------
+      // СТАТИСТИКА
+      // --------------------------------------------------
+
       status.innerHTML =
-        "Всего друзей: <b>" + friends.length + "</b><br>" +
+        "Всего друзей: <b>" +
+        friends.length +
+        "</b><br>" +
+
         "Даты рождения доступны: <b>" +
         withBirthday.length +
         "</b>";
 
+
+      // --------------------------------------------------
+      // ЕСЛИ ДАТ РОЖДЕНИЯ НЕТ
+      // --------------------------------------------------
+
       if (withBirthday.length === 0) {
+
         friendsBox.innerHTML =
-          "<p>VK не вернул ни одной доступной даты рождения.</p>";
+          "<p>" +
+          "VK не вернул ни одной доступной даты рождения." +
+          "</p>";
+
         return;
       }
 
+
+      // --------------------------------------------------
+      // ВЫВОД ДРУЗЕЙ
+      // --------------------------------------------------
+
       withBirthday.forEach(friend => {
 
-        const div = document.createElement("div");
+        const div =
+          document.createElement("div");
+
         div.className = "friend";
 
-        const profileUrl = friend.domain
-          ? "https://vk.ru/" + friend.domain
-          : "https://vk.ru/id" + friend.id;
+
+        const profileUrl =
+          friend.domain
+            ? "https://vk.ru/" + friend.domain
+            : "https://vk.ru/id" + friend.id;
+
 
         div.innerHTML =
-          "<a href=\"" + profileUrl + "\" target=\"_blank\">" +
+
+          "<a href=\"" +
+          profileUrl +
+          "\" target=\"_blank\">" +
+
           escapeHtml(
-            friend.first_name + " " + friend.last_name
+            friend.first_name +
+            " " +
+            friend.last_name
           ) +
+
           "</a>" +
-          " — <span class=\"date\">" +
+
+          " — " +
+
+          "<span class=\"date\">" +
+
           escapeHtml(friend.bdate) +
+
           "</span>";
 
+
         friendsBox.appendChild(div);
+
       });
+
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        "Ошибка при получении друзей:",
+        error
+      );
 
-      status.innerHTML =
-        "<b>Не получилось получить друзей VK.</b><br>" +
-        "Ошибка: " +
-        escapeHtml(error.message || String(error));
+
+      showError(
+        "Не получилось получить друзей VK.",
+        error
+      );
 
     } finally {
 
       startButton.disabled = false;
+
     }
+
   }
 
 
+  // --------------------------------------------------
+  // НОРМАЛЬНЫЙ ВЫВОД ОШИБКИ
+  // --------------------------------------------------
+
+  function showError(title, error) {
+
+    let errorText = "";
+
+
+    if (error) {
+
+      if (
+        error.error_data &&
+        error.error_data.error_msg
+      ) {
+
+        errorText =
+          error.error_data.error_msg;
+
+      } else if (
+        error.error_data &&
+        error.error_data.error_code
+      ) {
+
+        errorText =
+          "Код ошибки VK: " +
+          error.error_data.error_code;
+
+      } else if (error.message) {
+
+        errorText =
+          error.message;
+
+      } else {
+
+        try {
+
+          errorText =
+            JSON.stringify(error);
+
+        } catch (e) {
+
+          errorText =
+            String(error);
+
+        }
+
+      }
+
+    }
+
+
+    if (!errorText) {
+
+      errorText =
+        "Причина ошибки не определена.";
+
+    }
+
+
+    status.innerHTML =
+      "<b>" +
+      escapeHtml(title) +
+      "</b><br>" +
+
+      escapeHtml(errorText);
+
+
+    // Дополнительно выводим подробную информацию
+    // в консоль браузера
+    console.error(
+      "Подробная ошибка:",
+      error
+    );
+
+  }
+
+
+  // --------------------------------------------------
+  // ЗАЩИТА HTML
+  // --------------------------------------------------
+
   function escapeHtml(text) {
+
     return String(text)
+
       .replaceAll("&", "&amp;")
+
       .replaceAll("<", "&lt;")
+
       .replaceAll(">", "&gt;")
+
       .replaceAll('"', "&quot;")
+
       .replaceAll("'", "&#039;");
   }
 
 
-  startButton.addEventListener("click", start);
+  // --------------------------------------------------
+  // КНОПКА
+  // --------------------------------------------------
 
-  // Запускаем инициализацию СРАЗУ при открытии страницы.
+  startButton.addEventListener(
+    "click",
+    start
+  );
+
+
+  // --------------------------------------------------
+  // ЗАПУСК ПРИЛОЖЕНИЯ
+  // --------------------------------------------------
+
   initApp();
+
 </script>
 
 </body>
