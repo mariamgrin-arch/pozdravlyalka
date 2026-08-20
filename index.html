@@ -2185,16 +2185,10 @@ const styles = {
 };
 
 
-function generatorHtml(
-  friend
-) {
+function generatorHtml(friend) {
 
-  return
-
-    '<div id="gen-' +
-
+  return '<div id="gen-' +
     friend.id +
-
     '" class="generator">' +
 
       '<b>✨ Какое поздравление сделать?</b>' +
@@ -2202,71 +2196,46 @@ function generatorHtml(
       '<div class="styles">' +
 
         Object.keys(styles)
+          .map(function(key, i) {
 
-          .map(
-            (key, i) =>
-
-              '<button class="style ' +
-
-              (
-
-                i === 0
-                  ? 'active'
-                  : ''
-
-              ) +
-
+            return '<button class="style ' +
+              (i === 0 ? 'active' : '') +
               '" data-style="' +
-
               key +
-
               '" onclick="chooseStyle(' +
-
               friend.id +
-
               ',\'' +
-
               key +
-
               '\',this)">' +
-
               styles[key].label +
+              '</button>';
 
-              '</button>'
-
-          )
-
+          })
           .join("") +
 
       '</div>' +
 
       '<div id="msg-' +
-
       friend.id +
-
       '" class="message">' +
 
-      esc(
-        makeGreeting(
-          friend,
-          "warm"
-        )
-      ) +
+        esc(
+          makeGreeting(
+            friend,
+            "warm"
+          )
+        ) +
 
       '</div>' +
 
       '<div class="actions">' +
 
         '<button class="primary" onclick="copyGreeting(' +
-
         friend.id +
-
         ')">📋 Скопировать</button>' +
 
         '<button class="secondary" onclick="anotherGreeting(' +
-
         friend.id +
-
         ')">🎲 Другой вариант</button>' +
 
       '</div>' +
