@@ -8,362 +8,23 @@
 <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  margin: 0;
-  padding: 18px;
-  background: #f5f6f8;
-  color: #222;
-}
-
-.box {
-  max-width: 760px;
-  margin: 0 auto;
-}
-
-.card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 14px;
-}
-
-h1 {
-  margin: 0 0 6px;
-  font-size: 27px;
-}
-
-.subtitle {
-  margin: 0;
-  color: #626d7a;
-  line-height: 1.45;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-}
-
-button {
-  border: 0;
-  border-radius: 11px;
-  padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: .55;
-  cursor: default;
-}
-
-.primary {
-  background: #447bba;
-  color: #fff;
-}
-
-.secondary {
-  background: #edf3f9;
-  color: #447bba;
-}
-
-.status {
-  margin-top: 12px;
-  padding: 11px 13px;
-  border-radius: 11px;
-  background: #f0f2f5;
-  color: #626d7a;
-  line-height: 1.45;
-}
-
-.notice {
-  display: none;
-}
-
-.notice.show {
-  display: block;
-}
-
-.notice.ok {
-  background: #eef9f2;
-  color: #258151;
-}
-
-.notice.empty {
-  background: #f7f7f8;
-  color: #626d7a;
-}
-
-.notice-title {
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.section-title {
-  margin: 0 0 14px;
-  font-size: 20px;
-}
-
-.red {
-  color: #df5555;
-}
-
-.blue {
-  color: #447bba;
-}
-
-.green {
-  color: #2f9d67;
-}
-
-.purple {
-  color: #7650a8;
-}
-
-.friend {
-  padding: 13px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.friend:last-child {
-  border-bottom: 0;
-}
-
-.friend-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #e4e7eb;
-  flex: 0 0 50px;
-}
-
-.info {
-  flex: 1;
-  min-width: 0;
-}
-
-.name {
-  font-weight: 650;
-  margin-bottom: 4px;
-}
-
-.name a {
-  color: #222;
-  text-decoration: none;
-}
-
-.meta {
-  font-size: 13px;
-  color: #626d7a;
-  line-height: 1.45;
-}
-
-.when {
-  font-weight: 650;
-  color: #447bba;
-}
-
-.done {
-  color: #2f9d67;
-  font-weight: 650;
-}
-
-.row-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin: 10px 0 0 62px;
-}
-
-.row-actions button {
-  font-size: 12px;
-  padding: 8px 10px;
-}
-
-.generate {
-  background: #f0e8ff;
-  color: #7650a8;
-}
-
-.dialog {
-  background: #447bba;
-  color: #fff;
-}
-
-.mark {
-  background: #e8f6ed;
-  color: #258151;
-}
-
-.undo {
-  background: #f0f2f5;
-  color: #626d7a;
-}
-
-.generator {
-  display: none;
-  margin: 10px 0 0 62px;
-  padding: 14px;
-  background: #f7f5fb;
-  border-radius: 13px;
-}
-
-.generator.open {
-  display: block;
-}
-
-.styles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 8px 0 10px;
-}
-
-.style {
-  background: #fff;
-  color: #626d7a;
-  border: 1px solid #ddd;
-  padding: 7px 9px;
-  font-size: 12px;
-}
-
-.style.active {
-  background: #447bba;
-  color: #fff;
-  border-color: #447bba;
-}
-
-.message {
-  background: #fff;
-  border-radius: 10px;
-  padding: 12px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  margin-bottom: 9px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.stat {
-  background: #f5f6f8;
-  border-radius: 13px;
-  padding: 12px;
-  text-align: center;
-}
-
-.num {
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.label {
-  font-size: 12px;
-  color: #626d7a;
-}
-
-.more {
-  width: 100%;
-  margin-top: 9px;
-  background: #f0f2f5;
-  color: #447bba;
-}
-
-.history-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.history {
-  display: none;
-  margin-top: 10px;
-}
-
-.history.open {
-  display: block;
-}
-
-.history-item {
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.history-item:last-child {
-  border: 0;
-}
-
-.history-name {
-  font-weight: 650;
-}
-
-.history-meta {
-  font-size: 13px;
-  color: #626d7a;
-  margin-top: 3px;
-}
-
-.counter {
-  display: inline-block;
-  background: #f0e8ff;
-  color: #7650a8;
-  border-radius: 20px;
-  padding: 3px 8px;
-  font-size: 11px;
-  vertical-align: middle;
-}
-
-.empty {
-  color: #818c99;
-  line-height: 1.5;
-}
-
-@media(max-width:600px) {
-  body {
-    padding: 9px;
-  }
-
-  .card {
-    padding: 16px;
-    border-radius: 16px;
-  }
-
-  h1 {
-    font-size: 24px;
-  }
-
-  .row-actions,
-  .generator {
-    margin-left: 0;
-  }
-
-  .stats {
-    grid-template-columns: 1fr;
-  }
-
-  .history-head {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
+:root{--cream:#f7f1e7;--paper:#fffdf8;--paper2:#f1e6d8;--sage:#879984;--sage-dark:#657760;--terra:#b87862;--terra-dark:#9e624e;--brown:#59493e;--muted:#817166;--line:#e6d9ca;--green:#edf3e9;--lilac:#f1e8f5;--shadow:0 8px 25px rgba(89,73,62,.08)}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;margin:0;padding:16px;background:radial-gradient(circle at 5% 8%,rgba(135,153,132,.12),transparent 25%),radial-gradient(circle at 95% 18%,rgba(184,120,98,.10),transparent 24%),var(--cream);color:var(--brown)}
+.box{max-width:760px;margin:0 auto}.card{background:var(--paper);border:1px solid var(--line);border-radius:23px;padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{position:relative;overflow:hidden;padding:23px}.hero:after{content:"✿";position:absolute;right:22px;top:7px;font-size:55px;color:rgba(135,153,132,.15)}
+.hero-top{display:flex;align-items:center;gap:14px}.logo-badge{width:64px;height:64px;border-radius:20px;background:linear-gradient(145deg,#eee2d1,#f9f3e9);display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:inset 0 0 0 1px rgba(135,153,132,.15);position:relative;flex:none}.logo-badge:after{content:"❧";position:absolute;right:-4px;bottom:-8px;color:var(--sage);font-size:23px;transform:rotate(-15deg)}
+h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:30px;font-weight:600}.subtitle{margin:6px 0 0;color:var(--muted);line-height:1.45}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:650;cursor:pointer;transition:.18s ease}button:hover{transform:translateY(-1px)}button:disabled{opacity:.55;cursor:default;transform:none}.primary{background:var(--sage);color:#fff}.primary:hover{background:var(--sage-dark)}.secondary{background:var(--paper2);color:var(--brown)}
+.status{margin-top:12px;padding:11px 13px;border-radius:13px;background:#f4eee5;color:var(--muted);line-height:1.45;font-size:13px}
+.search-wrap{display:none;margin-bottom:14px;position:relative}.search-wrap input{width:100%;border:1px solid var(--line);background:var(--paper);border-radius:16px;padding:13px 15px 13px 42px;color:var(--brown);outline:none;box-shadow:var(--shadow)}.search-wrap input:focus{border-color:var(--sage)}.search-icon{position:absolute;left:15px;top:10px;font-size:21px;opacity:.55;z-index:1}
+.notice{display:none}.notice.show{display:block}.notice.ok{background:var(--green);border-color:#dce8d6;color:var(--sage-dark)}.notice.empty{background:#f5efe6;color:var(--muted)}.notice-title{font-family:Georgia,"Times New Roman",serif;font-size:18px;font-weight:600;margin-bottom:4px}.section-title{margin:0 0 14px;font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:600}.red{color:var(--terra-dark)}.blue{color:var(--sage-dark)}.green{color:var(--sage-dark)}.purple{color:#765a80}
+.friend{padding:14px 0;border-bottom:1px solid var(--line)}.friend:last-child{border-bottom:0}.friend-row{display:flex;gap:12px;align-items:center}.avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;background:var(--paper2);flex:0 0 52px}.info{flex:1;min-width:0}.name{font-weight:700;margin-bottom:4px}.name a{color:var(--brown);text-decoration:none}.name a:hover{color:var(--terra-dark)}.meta{font-size:13px;color:var(--muted);line-height:1.5}.when{font-weight:700;color:var(--terra-dark)}.done{color:var(--sage-dark);font-weight:700}.row-actions{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 0 64px}.row-actions button{font-size:12px;padding:8px 10px}.generate{background:var(--lilac);color:#765a80}.dialog{background:var(--sage);color:#fff}.mark{background:var(--green);color:var(--sage-dark)}.undo{background:#f0ebe5;color:var(--muted)}
+.generator{display:none;margin:11px 0 0 64px;padding:16px;background:#fbf5ed;border:1px solid var(--line);border-radius:18px}.generator.open{display:block}.styles{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 11px}.style{background:var(--paper);color:var(--muted);border:1px solid var(--line);padding:8px 10px;font-size:12px}.style.active{background:var(--sage);color:#fff;border-color:var(--sage)}.message{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px;line-height:1.55;white-space:pre-wrap;margin-bottom:9px}.generator .actions{margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:#f6f0e7;border:1px solid var(--line);border-radius:15px;padding:11px 7px;text-align:center}.num{font-size:21px;font-family:Georgia,serif;font-weight:700;color:var(--sage-dark)}.label{font-size:11px;color:var(--muted);margin-top:3px}
+.more{width:100%;margin-top:9px;background:var(--paper2);color:var(--brown)}.history-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.history{display:none;margin-top:10px}.history.open{display:block}.history-item{padding:11px 0;border-bottom:1px solid var(--line)}.history-item:last-child{border:0}.history-name{font-weight:700}.history-meta{font-size:13px;color:var(--muted);margin-top:3px}.counter{display:inline-block;background:var(--lilac);color:#765a80;border-radius:20px;padding:3px 8px;font-size:11px;vertical-align:middle}.empty{color:var(--muted);line-height:1.5}
+.search-empty{padding:15px 0;color:var(--muted);text-align:center}.footer{text-align:center;color:var(--muted);font-size:11px;margin:25px 0 5px;opacity:.7}
+@media(max-width:600px){body{padding:9px}.card{padding:16px;border-radius:19px}.hero{padding:18px}.hero-top{gap:11px}.logo-badge{width:56px;height:56px;font-size:29px}h1{font-size:25px}.row-actions,.generator{margin-left:0}.stats{grid-template-columns:repeat(2,1fr)}.history-head{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 
@@ -371,38 +32,27 @@ button:disabled {
 
 <div class="box">
 
-  <div class="card">
-
-    <h1>🎂 Поздравлялка 2.0</h1>
-
-    <p class="subtitle">
-      Я слежу за днями рождения твоих друзей, чтобы ты ничего не забыла.
-    </p>
-
-    <div class="actions">
-
-      <button id="loadBtn" class="primary">
-        Загрузить друзей
-      </button>
-
-      <button
-        id="refreshBtn"
-        class="secondary"
-        style="display:none"
-      >
-        🔄 Обновить друзей
-      </button>
-
+  <div class="card hero">
+  <div class="hero-top">
+    <div class="logo-badge">🎂</div>
+    <div>
+      <h1>Поздравлялка ♡</h1>
+      <p class="subtitle">Чтобы тёплые слова не терялись.</p>
     </div>
-
-    <div id="status" class="status">
-      Подключаем приложение...
-    </div>
-
   </div>
+  <div class="actions">
+    <button id="loadBtn" class="primary">🌿 Загрузить друзей</button>
+    <button id="refreshBtn" class="secondary" style="display:none">↻ Обновить друзей</button>
+  </div>
+  <div id="status" class="status">Подключаем приложение...</div>
+</div>
 
+<div id="searchWrap" class="search-wrap">
+  <span class="search-icon">⌕</span>
+  <input id="searchInput" type="text" placeholder="Найти друга..." autocomplete="off">
+</div>
 
-  <div id="notice" class="card notice">
+<div id="notice" class="card notice">
 
     <div
       id="noticeTitle"
@@ -498,27 +148,12 @@ button:disabled {
 
 
       <div class="stat">
-
-        <div id="statDone" class="num">
-          0
-        </div>
-
-        <div class="label">
-          поздравлено в этом году
-        </div>
-
+        <div id="statDone" class="num">0</div>
+        <div class="label">поздравлено в этом году</div>
       </div>
-
       <div class="stat">
-
-        <div id="statReserve" class="num">
-          0
-        </div>
-
-        <div class="label">
-          резервных дат
-        </div>
-
+        <div id="statReserve" class="num">0</div>
+        <div class="label">резервных дат</div>
       </div>
 
     </div>
@@ -565,8 +200,9 @@ button:disabled {
 
   </div>
 
-</div>
+<div class="footer">Поздравлялка ♡ · личный календарь дней рождения</div>
 
+</div>
 
 <script>
 
@@ -1450,6 +1086,8 @@ function isDone(
 =========================== */
 
 function render() {
+  const searchResults = $("searchResults");
+  if (searchResults) searchResults.style.display = "none";
 
   const prepared =
     friends
@@ -2615,6 +2253,11 @@ function openDialogOnly(
    ОТМЕТКА
 =========================== */
 
+function birthdayForFriend(friend) {
+  if (!friend) return null;
+  return friend.bdate || birthdayReserve[String(friend.id)]?.bdate || null;
+}
+
 async function markDone(
   id
 ) {
@@ -2626,17 +2269,13 @@ async function markDone(
     );
 
 
-  if (
-    !friend ||
-    !friend.bdate
-  )
+  const birthday = birthdayForFriend(friend);
+
+  if (!friend || !birthday)
     return;
 
-
   const info =
-    birthdayInfo(
-      friend.bdate
-    );
+    birthdayInfo(birthday);
 
 
   await saveHistoryEvent(
@@ -2668,18 +2307,14 @@ async function undoDone(
     );
 
 
-  if (
-    !friend ||
-    !friend.bdate
-  )
-    return;
+  const birthday = birthdayForFriend(friend);
 
+  if (!friend || !birthday)
+    return;
 
   await deleteHistoryEvent(
     friend,
-    birthdayInfo(
-      friend.bdate
-    )
+    birthdayInfo(birthday)
   );
 
 
@@ -2687,6 +2322,59 @@ async function undoDone(
 
 }
 
+
+/* ===========================
+   ПОИСК ПО ДРУЗЬЯМ
+=========================== */
+
+$("searchInput").addEventListener("input", function() {
+  const query = this.value.trim().toLowerCase();
+  const oldResults = $("searchResults");
+
+  if (oldResults) oldResults.remove();
+
+  if (!query) {
+    render();
+    return;
+  }
+
+  $("notice").className = "card notice";
+  $("todaySection").style.display = "none";
+  $("soonSection").style.display = "none";
+  $("doneSection").style.display = "none";
+  $("statsSection").style.display = "none";
+  $("historySection").style.display = "none";
+
+  const box = document.createElement("div");
+  box.id = "searchResults";
+  box.className = "card";
+  box.innerHTML = '<h2 class="section-title blue">🔎 Результаты поиска</h2>';
+  $("searchWrap").insertAdjacentElement("afterend", box);
+
+  const results = friends.filter(friend => {
+    const name = (friend.first_name + " " + friend.last_name).toLowerCase();
+    return name.includes(query);
+  });
+
+  if (!results.length) {
+    box.innerHTML += '<div class="search-empty">Никого не нашли. Попробуй другое имя или фамилию.</div>';
+    return;
+  }
+
+  results.forEach(friend => {
+    const birthday = birthdayForFriend(friend);
+    if (birthday) {
+      box.appendChild(friendCard(friend, birthdayInfo(birthday)));
+    } else {
+      const div = document.createElement("div");
+      div.className = "friend";
+      const url = friend.domain ? "https://vk.ru/" + friend.domain : "https://vk.ru/id" + friend.id;
+      const avatar = friend.photo_200 ? '<img class="avatar" src="' + esc(friend.photo_200) + '" alt="">' : '<div class="avatar"></div>';
+      div.innerHTML = '<div class="friend-row">' + avatar + '<div class="info"><div class="name"><a target="_blank" href="' + esc(url) + '">' + esc(friend.first_name + " " + friend.last_name) + '</a></div><div class="meta">🎂 День рождения</div></div></div>';
+      box.appendChild(div);
+    }
+  });
+});
 
 /* ===========================
    КНОПКИ
