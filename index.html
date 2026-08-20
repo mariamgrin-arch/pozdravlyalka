@@ -24,6 +24,36 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:#f6f0e7;border:1px solid var(--line);border-radius:15px;padding:11px 7px;text-align:center}.num{font-size:21px;font-family:Georgia,serif;font-weight:700;color:var(--sage-dark)}.label{font-size:11px;color:var(--muted);margin-top:3px}
 .more{width:100%;margin-top:9px;background:var(--paper2);color:var(--brown)}.history-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.history{display:none;margin-top:10px}.history.open{display:block}.history-item{padding:11px 0;border-bottom:1px solid var(--line)}.history-item:last-child{border:0}.history-name{font-weight:700}.history-meta{font-size:13px;color:var(--muted);margin-top:3px}.counter{display:inline-block;background:var(--lilac);color:#765a80;border-radius:20px;padding:3px 8px;font-size:11px;vertical-align:middle}.empty{color:var(--muted);line-height:1.5}
 .search-empty{padding:15px 0;color:var(--muted);text-align:center}.footer{text-align:center;color:var(--muted);font-size:11px;margin:25px 0 5px;opacity:.7}
+
+/* --- Boho-декор: только визуальный слой, логика приложения не меняется --- */
+.hero{min-height:184px}
+.hero-copy{position:relative;z-index:2;max-width:72%}
+.hero-art{position:absolute;right:18px;bottom:10px;width:190px;height:115px;pointer-events:none;opacity:.96}
+.hero-art .sprig{position:absolute;right:6px;top:4px;width:105px;height:80px;transform:rotate(7deg);color:var(--sage)}
+.hero-art .mug{position:absolute;right:58px;bottom:8px;width:76px;height:67px;transform:rotate(-4deg)}
+.hero-art .env{position:absolute;width:66px;height:48px;background:#fffaf0;border:1px solid #decfbd;border-radius:8px;box-shadow:0 6px 14px rgba(89,73,62,.10)}
+.hero-art .env:before,.hero-art .env:after{content:"";position:absolute;inset:0}
+.hero-art .env:before{background:linear-gradient(135deg,transparent 49%,#dfcfbc 50%,transparent 52%),linear-gradient(225deg,transparent 49%,#dfcfbc 50%,transparent 52%);border-radius:8px}
+.hero-art .env:after{left:7px;right:7px;top:8px;height:1px;background:#e8dac8;box-shadow:0 8px 0 #eee2d3}
+.hero-art .env.one{right:0;bottom:46px;transform:rotate(8deg)}
+.hero-art .env.two{right:112px;bottom:0;transform:rotate(-9deg);background:#f8eee4}
+.hero-art .tiny-note{position:absolute;right:20px;bottom:0;width:82px;height:52px;background:#f6e8d7;border:1px solid #e1cfbb;border-radius:5px;transform:rotate(-5deg);box-shadow:0 6px 14px rgba(89,73,62,.08);font:11px Georgia,serif;color:#8a7666;padding:10px 8px;text-align:center}
+.hero-art .tiny-note:after{content:"♡";display:block;font-size:14px;color:var(--terra);margin-top:2px}
+.decor-line{height:18px;margin:-2px 30px 12px;position:relative;opacity:.55}
+.decor-line:before{content:"";position:absolute;left:0;right:0;top:8px;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.decor-line:after{content:"✦   ❧   ✦";position:absolute;left:50%;transform:translateX(-50%);top:0;background:var(--cream);padding:0 10px;color:var(--sage);font-size:11px;white-space:nowrap}
+.card.decorated{position:relative;overflow:hidden}
+.card.decorated:before{content:"";position:absolute;right:-15px;bottom:-22px;width:85px;height:85px;border:1px solid rgba(184,120,98,.12);border-radius:50%}
+.card.decorated:after{content:"❧";position:absolute;right:18px;bottom:10px;color:rgba(135,153,132,.16);font-size:34px;transform:rotate(-18deg);pointer-events:none}
+.notice.empty:after{content:"☕";position:absolute;right:22px;top:14px;font-size:31px;opacity:.18}
+.notice{position:relative;overflow:hidden}
+.boho-tip{text-align:center;color:#9a8b7d;font:11px Georgia,"Times New Roman",serif;margin:-3px 0 12px;opacity:.7}.search-wrap{background:transparent}
+.search-wrap input::placeholder{color:#9a8b7d}
+.generator{position:relative;overflow:hidden}
+.generator:after{content:"✉";position:absolute;right:12px;top:9px;color:rgba(184,120,98,.13);font-size:36px;transform:rotate(10deg);pointer-events:none}
+.footer{font-family:Georgia,"Times New Roman",serif;letter-spacing:.15px}
+@media(max-width:600px){.hero{min-height:165px}.hero-copy{max-width:100%}.hero-art{right:0;bottom:4px;transform:scale(.78);transform-origin:right bottom;opacity:.72}.hero-art .env.two{display:none}.hero-art .tiny-note{display:none}.decor-line{margin-left:10px;margin-right:10px}.card.decorated:after{right:10px;bottom:8px}}
+
 @media(max-width:600px){body{padding:9px}.card{padding:16px;border-radius:19px}.hero{padding:18px}.hero-top{gap:11px}.logo-badge{width:56px;height:56px;font-size:29px}h1{font-size:25px}.row-actions,.generator{margin-left:0}.stats{grid-template-columns:repeat(2,1fr)}.history-head{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
@@ -33,24 +63,48 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 <div class="box">
 
   <div class="card hero">
-  <div class="hero-top">
-    <div class="logo-badge">🎂</div>
-    <div>
-      <h1>Поздравлялка ♡</h1>
-      <p class="subtitle">Чтобы тёплые слова не терялись.</p>
+    <div class="hero-copy">
+      <div class="hero-top">
+        <div class="logo-badge">🎂</div>
+        <div>
+          <h1>Поздравлялка ♡</h1>
+          <p class="subtitle">Чтобы тёплые слова не терялись.</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="loadBtn" class="primary">🌿 Загрузить друзей</button>
+        <button id="refreshBtn" class="secondary" style="display:none">↻ Обновить друзей</button>
+      </div>
+      <div id="status" class="status">Подключаем приложение...</div>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <div class="env one"></div>
+      <div class="env two"></div>
+      <div class="tiny-note">тёплые слова<br>не забываются</div>
+      <svg class="mug" viewBox="0 0 90 78" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 24h48v31c0 10-8 17-17 17H34c-9 0-17-7-17-17V24Z" fill="#D8C4AA" stroke="#8D7767" stroke-width="2"/>
+        <path d="M65 31h8c8 0 12 5 12 11s-4 11-12 11h-8" stroke="#8D7767" stroke-width="3" stroke-linecap="round"/>
+        <path d="M29 17c-2-6 5-7 3-13M44 17c-2-6 5-7 3-13" stroke="#9BA891" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M24 31h34" stroke="#B87862" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+        <path d="M22 57c10 4 26 4 38 0" stroke="#C2A98C" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <svg class="sprig" viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 80C31 61 51 42 107 8" stroke="#879984" stroke-width="2" stroke-linecap="round"/>
+        <path d="M32 60c-6-12-13-15-20-16M43 51c-3-12 1-19 8-24M55 43c-1-10 5-17 14-21M68 35c4-9 11-13 20-13M80 27c8-5 15-5 22-1" stroke="#879984" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="21" cy="43" r="3" fill="#B87862"/><circle cx="51" cy="27" r="3" fill="#B87862"/><circle cx="73" cy="23" r="3" fill="#B87862"/><circle cx="94" cy="22" r="3" fill="#B87862"/>
+      </svg>
     </div>
   </div>
-  <div class="actions">
-    <button id="loadBtn" class="primary">🌿 Загрузить друзей</button>
-    <button id="refreshBtn" class="secondary" style="display:none">↻ Обновить друзей</button>
-  </div>
-  <div id="status" class="status">Подключаем приложение...</div>
-</div>
+
+  <div class="decor-line" aria-hidden="true"></div>
 
 <div id="searchWrap" class="search-wrap">
   <span class="search-icon">⌕</span>
   <input id="searchInput" type="text" placeholder="Найти друга..." autocomplete="off">
 </div>
+
+<div class="boho-tip" aria-hidden="true">✉ маленькие напоминания — большие радости ♡</div>
 
 <div id="notice" class="card notice">
 
@@ -66,7 +120,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="todaySection"
-    class="card"
+    class="card decorated"
     style="display:none"
   >
 
@@ -81,7 +135,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="soonSection"
-    class="card"
+    class="card decorated"
     style="display:none"
   >
 
@@ -96,7 +150,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="doneSection"
-    class="card"
+    class="card decorated"
     style="display:none"
   >
 
@@ -111,7 +165,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="statsSection"
-    class="card"
+    class="card decorated"
     style="display:none"
   >
 
@@ -163,7 +217,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="historySection"
-    class="card"
+    class="card decorated"
     style="display:none"
   >
 
