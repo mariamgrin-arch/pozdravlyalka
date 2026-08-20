@@ -36,97 +36,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
   z-index:2;
   max-width:calc(100% - 175px);
 }
-.hero-art{
-  position:absolute;
-  right:12px;
-  top:12px;
-  width:175px;
-  height:112px;
-  pointer-events:none;
-  opacity:.82;
-  z-index:1;
-}
-.hero-art .sprig{
-  position:absolute;
-  right:3px;
-  top:0;
-  width:100px;
-  height:76px;
-  transform:rotate(7deg);
-}
-.hero-art .mug{
-  position:absolute;
-  right:52px;
-  bottom:3px;
-  width:72px;
-  height:63px;
-  transform:rotate(-4deg);
-}
-.hero-art .env{
-  position:absolute;
-  width:62px;
-  height:45px;
-  background:#fffaf0;
-  border:1px solid #decfbd;
-  border-radius:8px;
-  box-shadow:0 5px 12px rgba(89,73,62,.08);
-}
-.hero-art .env:before,
-.hero-art .env:after{
-  content:"";
-  position:absolute;
-  inset:0;
-}
-.hero-art .env:before{
-  background:
-    linear-gradient(135deg,transparent 49%,#dfcfbc 50%,transparent 52%),
-    linear-gradient(225deg,transparent 49%,#dfcfbc 50%,transparent 52%);
-  border-radius:8px;
-}
-.hero-art .env:after{
-  left:7px;
-  right:7px;
-  top:8px;
-  height:1px;
-  background:#e8dac8;
-  box-shadow:0 8px 0 #eee2d3;
-}
-.hero-art .env.one{
-  right:0;
-  bottom:43px;
-  transform:rotate(8deg);
-}
-.hero-art .env.two{
-  right:103px;
-  bottom:0;
-  transform:rotate(-9deg);
-  background:#f8eee4;
-}
-.hero-art .tiny-note{
-  position:absolute;
-  right:13px;
-  bottom:-1px;
-  width:78px;
-  height:49px;
-  background:#f6e8d7;
-  border:1px solid #e1cfbb;
-  border-radius:5px;
-  transform:rotate(-5deg);
-  box-shadow:0 5px 12px rgba(89,73,62,.07);
-  font:10px Georgia,"Times New Roman",serif;
-  color:#8a7666;
-  padding:8px 6px;
-  text-align:center;
-}
-.hero-art .tiny-note:after{
-  content:"♡";
-  display:block;
-  font-size:13px;
-  color:var(--terra);
-  margin-top:1px;
-}
 
-/* Статус теперь занимает всю ширину карточки и не пересекается с декором. */
 .hero > .status{
   position:relative;
   z-index:3;
@@ -134,77 +44,11 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
   margin-top:12px;
 }
 
-.decor-line{
-  height:10px;
-  margin:0 26px 7px;
-  position:relative;
-  opacity:.5;
-}
-.decor-line:before{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  top:5px;
-  height:1px;
-  background:linear-gradient(90deg,transparent,var(--line),transparent);
-}
-.decor-line:after{
-  content:"✦  ❧  ✦";
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  top:-1px;
-  background:var(--cream);
-  padding:0 8px;
-  color:var(--sage);
-  font-size:9px;
-  white-space:nowrap;
-}
-
-.card.decorated{
-  position:relative;
-  overflow:hidden;
-}
-.card.decorated:before{
-  content:"";
-  position:absolute;
-  right:-18px;
-  bottom:-24px;
-  width:80px;
-  height:80px;
-  border:1px solid rgba(184,120,98,.10);
-  border-radius:50%;
-}
-.card.decorated:after{
-  content:"❧";
-  position:absolute;
-  right:16px;
-  bottom:9px;
-  color:rgba(135,153,132,.13);
-  font-size:30px;
-  transform:rotate(-18deg);
-  pointer-events:none;
-}
 .notice{
   position:relative;
   overflow:hidden;
 }
-.notice.empty:after{
-  content:"☕";
-  position:absolute;
-  right:18px;
-  top:12px;
-  font-size:29px;
-  opacity:.16;
-}
-.boho-tip{
-  text-align:center;
-  color:#9a8b7d;
-  font:10px Georgia,"Times New Roman",serif;
-  margin:-1px 0 8px;
-  opacity:.62;
-}
+
 .search-wrap{
   background:transparent;
 }
@@ -280,33 +124,15 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
     <div id="status" class="status">Подключаем приложение...</div>
 
-    <div class="hero-art" aria-hidden="true">
-      <div class="env one"></div>
-      <div class="env two"></div>
-      <div class="tiny-note">тёплые слова<br>не забываются</div>
-      <svg class="mug" viewBox="0 0 90 78" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17 24h48v31c0 10-8 17-17 17H34c-9 0-17-7-17-17V24Z" fill="#D8C4AA" stroke="#8D7767" stroke-width="2"/>
-        <path d="M65 31h8c8 0 12 5 12 11s-4 11-12 11h-8" stroke="#8D7767" stroke-width="3" stroke-linecap="round"/>
-        <path d="M29 17c-2-6 5-7 3-13M44 17c-2-6 5-7 3-13" stroke="#9BA891" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M24 31h34" stroke="#B87862" stroke-width="2" stroke-linecap="round" opacity=".7"/>
-        <path d="M22 57c10 4 26 4 38 0" stroke="#C2A98C" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <svg class="sprig" viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 80C31 61 51 42 107 8" stroke="#879984" stroke-width="2" stroke-linecap="round"/>
-        <path d="M32 60c-6-12-13-15-20-16M43 51c-3-12 1-19 8-24M55 43c-1-10 5-17 14-21M68 35c4-9 11-13 20-13M80 27c8-5 15-5 22-1" stroke="#879984" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="21" cy="43" r="3" fill="#B87862"/><circle cx="51" cy="27" r="3" fill="#B87862"/><circle cx="73" cy="23" r="3" fill="#B87862"/><circle cx="94" cy="22" r="3" fill="#B87862"/>
-      </svg>
     </div>
   </div>
 
-  <div class="decor-line" aria-hidden="true"></div>
 
 <div id="searchWrap" class="search-wrap">
   <span class="search-icon">⌕</span>
   <input id="searchInput" type="text" placeholder="Найти друга..." autocomplete="off">
 </div>
 
-<div class="boho-tip" aria-hidden="true">✉ маленькие напоминания — большие радости ♡</div>
 
 <div id="notice" class="card notice">
 
@@ -322,7 +148,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="todaySection"
-    class="card decorated"
+    class="card"
     style="display:none"
   >
 
@@ -337,7 +163,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="soonSection"
-    class="card decorated"
+    class="card"
     style="display:none"
   >
 
@@ -352,7 +178,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="doneSection"
-    class="card decorated"
+    class="card"
     style="display:none"
   >
 
@@ -367,7 +193,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="statsSection"
-    class="card decorated"
+    class="card"
     style="display:none"
   >
 
@@ -419,7 +245,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:
 
   <div
     id="historySection"
-    class="card decorated"
+    class="card"
     style="display:none"
   >
 
