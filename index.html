@@ -9,23 +9,36 @@
   <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                   Arial, sans-serif;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
       margin: 0;
       padding: 20px;
+
       background: #f5f6f8;
       color: #222;
     }
+
 
     .box {
       max-width: 720px;
       margin: 0 auto;
     }
+
+
+    /* =========================
+       ШАПКА
+    ========================= */
 
     .header {
       background: white;
@@ -34,10 +47,12 @@
       margin-bottom: 16px;
     }
 
+
     h1 {
       margin: 0 0 8px;
       font-size: 28px;
     }
+
 
     .subtitle {
       margin: 0;
@@ -45,273 +60,567 @@
       line-height: 1.5;
     }
 
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+
     button {
       border: 0;
       border-radius: 12px;
+
       padding: 11px 15px;
+
       font-size: 14px;
       font-weight: 600;
+
       cursor: pointer;
     }
+
 
     button:disabled {
       opacity: 0.6;
       cursor: default;
     }
 
+
     .main-button {
-      margin-top: 18px;
       background: #447bba;
       color: white;
     }
 
+
+    .refresh-button {
+      background: #eef4fa;
+      color: #447bba;
+    }
+
+
     #status {
-      margin-top: 16px;
+      margin-top: 14px;
+
       padding: 12px;
+
       border-radius: 12px;
+
       background: #f0f2f5;
-      color: #444;
+
+      color: #626d7a;
+
       line-height: 1.5;
     }
 
+
+    /* =========================
+       СООБЩЕНИЕ О СЕГОДНЯ
+    ========================= */
+
+    .daily-status {
+      background: white;
+
+      padding: 18px 20px;
+
+      border-radius: 20px;
+
+      margin-bottom: 16px;
+
+      display: none;
+    }
+
+
+    .daily-status.success {
+      display: block;
+
+      background: #eef9f2;
+
+      color: #258151;
+    }
+
+
+    .daily-status.empty {
+      display: block;
+
+      background: #f7f7f8;
+
+      color: #626d7a;
+    }
+
+
+    .daily-status-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+
+    /* =========================
+       СЕКЦИИ
+    ========================= */
+
     .section {
       background: white;
+
       border-radius: 20px;
+
       padding: 20px;
+
       margin-bottom: 16px;
     }
 
+
     .section-title {
       margin: 0 0 16px;
+
       font-size: 21px;
     }
+
 
     .today-title {
       color: #e05252;
     }
 
+
     .soon-title {
       color: #447bba;
     }
+
 
     .done-title {
       color: #35a56a;
     }
 
+
     .history-title {
       color: #7650a8;
     }
 
+
+    .stats-title {
+      color: #447bba;
+    }
+
+
+    /* =========================
+       СТАТИСТИКА
+    ========================= */
+
+    .stats-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 10px;
+    }
+
+
+    .stat {
+      background: #f5f6f8;
+
+      border-radius: 14px;
+
+      padding: 14px;
+
+      text-align: center;
+    }
+
+
+    .stat-number {
+      font-size: 23px;
+      font-weight: 700;
+
+      margin-bottom: 4px;
+    }
+
+
+    .stat-label {
+      color: #626d7a;
+      font-size: 12px;
+    }
+
+
+    /* =========================
+       ДРУГ
+    ========================= */
+
     .friend {
       padding: 14px 0;
-      border-bottom: 1px solid #eee;
+
+      border-bottom:
+        1px solid #eee;
     }
+
 
     .friend:last-child {
       border-bottom: 0;
     }
 
+
     .friend-main {
       display: flex;
+
       align-items: center;
+
       gap: 14px;
     }
+
 
     .avatar {
       width: 52px;
       height: 52px;
+
       border-radius: 50%;
+
       object-fit: cover;
+
       background: #e5e7eb;
+
       flex-shrink: 0;
     }
+
 
     .friend-info {
       flex: 1;
       min-width: 0;
     }
 
+
     .friend-name {
       font-size: 16px;
+
       font-weight: 600;
+
       margin-bottom: 5px;
     }
 
+
     .friend-name a {
       color: #222;
+
       text-decoration: none;
     }
 
+
     .birthday {
       color: #626d7a;
+
       font-size: 14px;
+
       line-height: 1.4;
     }
 
+
     .when {
       color: #447bba;
+
       font-weight: 600;
     }
+
 
     .today .when {
       color: #e05252;
     }
 
+
+    .done-label {
+      color: #35a56a;
+
+      font-weight: 600;
+    }
+
+
     .actions {
       display: flex;
+
       flex-wrap: wrap;
+
       gap: 8px;
+
       margin-top: 12px;
+
       padding-left: 66px;
     }
+
 
     .dialog-button {
       background: #447bba;
       color: white;
     }
 
+
     .generate-button {
       background: #f0e8ff;
       color: #7650a8;
     }
+
 
     .done-button {
       background: #e7f6ed;
       color: #258151;
     }
 
+
     .undo-button {
       background: #f0f2f5;
       color: #626d7a;
     }
 
+
+    /* =========================
+       ГЕНЕРАТОР
+    ========================= */
+
     .generator {
       display: none;
+
       margin-top: 14px;
+
       margin-left: 66px;
+
       padding: 16px;
+
       background: #f7f5fb;
+
       border-radius: 14px;
     }
+
 
     .generator.visible {
       display: block;
     }
 
+
     .generator-title {
       font-weight: 700;
+
       margin-bottom: 12px;
     }
+
 
     .style-buttons {
       display: flex;
+
       flex-wrap: wrap;
+
       gap: 7px;
+
       margin-bottom: 12px;
     }
 
+
     .style-button {
       background: white;
+
       color: #626d7a;
-      border: 1px solid #ddd;
+
+      border:
+        1px solid #ddd;
+
       padding: 8px 10px;
+
       font-size: 12px;
     }
 
+
     .style-button.active {
       background: #447bba;
+
       color: white;
+
       border-color: #447bba;
     }
 
+
     .message {
       background: white;
+
       border-radius: 12px;
+
       padding: 14px;
+
       line-height: 1.55;
+
       white-space: pre-wrap;
+
       margin-bottom: 10px;
     }
 
+
     .generator-actions {
       display: flex;
+
       flex-wrap: wrap;
+
       gap: 8px;
     }
 
+
     .copy-button {
       background: #eaf2fb;
+
       color: #447bba;
     }
+
 
     .new-button {
       background: #f0f2f5;
+
       color: #626d7a;
     }
 
-    .empty {
-      color: #818c99;
-      padding: 8px 0;
-      line-height: 1.5;
-    }
 
-    .all-button {
+    /* =========================
+       КНОПКА ПОКАЗАТЬ ЕЩЁ
+    ========================= */
+
+    .more-button {
       width: 100%;
+
+      margin-top: 10px;
+
       background: #f0f2f5;
+
       color: #447bba;
-      margin-top: 4px;
     }
 
-    .all-list {
+
+    /* =========================
+       ИСТОРИЯ
+    ========================= */
+
+    .history-header {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 10px;
+    }
+
+
+    .history-toggle {
+      background: #f0e8ff;
+
+      color: #7650a8;
+
+      white-space: nowrap;
+    }
+
+
+    .history-list {
       display: none;
+
+      margin-top: 14px;
     }
 
-    .all-list.visible {
+
+    .history-list.visible {
       display: block;
     }
 
-    .done-card {
-      opacity: 0.75;
-    }
-
-    .done-label {
-      color: #35a56a;
-      font-weight: 600;
-    }
 
     .history-item {
       padding: 12px 0;
-      border-bottom: 1px solid #eee;
+
+      border-bottom:
+        1px solid #eee;
     }
+
 
     .history-item:last-child {
       border-bottom: 0;
     }
 
+
     .history-name {
       font-weight: 600;
+
       margin-bottom: 4px;
     }
 
+
     .history-date {
       color: #626d7a;
+
       font-size: 14px;
     }
+
 
     .history-empty {
       color: #818c99;
     }
 
+
     .counter {
       display: inline-block;
+
       background: #f0e8ff;
+
       color: #7650a8;
+
       border-radius: 20px;
+
       padding: 4px 9px;
+
       font-size: 12px;
+
       margin-left: 5px;
+
       vertical-align: middle;
     }
+
+
+    /* =========================
+       ВСЕ ДРУЗЬЯ
+    ========================= */
+
+    .all-list {
+      display: none;
+    }
+
+
+    .all-list.visible {
+      display: block;
+    }
+
+
+    .all-button {
+      width: 100%;
+
+      background: #f0f2f5;
+
+      color: #447bba;
+
+      margin-top: 4px;
+    }
+
+
+    /* =========================
+       ПУСТО
+    ========================= */
+
+    .empty {
+      color: #818c99;
+
+      padding: 8px 0;
+
+      line-height: 1.5;
+    }
+
+
+    .done-card {
+      opacity: 0.75;
+    }
+
+
+    /* =========================
+       МОБИЛЬНАЯ ВЕРСИЯ
+    ========================= */
 
     @media (max-width: 600px) {
 
@@ -319,31 +628,57 @@
         padding: 10px;
       }
 
+
       .header,
-      .section {
+      .section,
+      .daily-status {
         border-radius: 16px;
+
         padding: 16px;
       }
+
 
       h1 {
         font-size: 24px;
       }
 
+
       .actions,
       .generator {
         margin-left: 0;
+
         padding-left: 0;
       }
 
+
       .friend-main {
-        align-items: flex-start;
+        align-items:
+          flex-start;
       }
+
 
       .avatar {
         width: 46px;
         height: 46px;
       }
+
+
+      .stats-grid {
+        grid-template-columns:
+          1fr;
+      }
+
+
+      .history-header {
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+      }
+
     }
+
   </style>
 </head>
 
@@ -352,143 +687,289 @@
 
 <div class="box">
 
-  <!-- ШАПКА -->
+
+  <!-- =========================
+       ШАПКА
+  ========================== -->
 
   <div class="header">
 
-    <h1>🎂 Поздравлялка 2.0</h1>
+    <h1>
+      🎂 Поздравлялка 2.0
+    </h1>
+
 
     <p class="subtitle">
       Я слежу за днями рождения твоих друзей,
       чтобы ты ничего не забыла.
     </p>
 
-    <button
-      id="start"
-      class="main-button"
-      disabled
-    >
-      Загрузить дни рождения
-    </button>
+
+    <div class="header-actions">
+
+      <button
+        id="start"
+        class="main-button"
+      >
+        Загрузить друзей
+      </button>
+
+
+      <button
+        id="refresh"
+        class="refresh-button"
+        style="display:none;"
+      >
+        🔄 Обновить друзей
+      </button>
+
+    </div>
+
 
     <div id="status">
-      Подключаемся к VK...
+      Загружаем приложение...
     </div>
 
   </div>
 
 
-  <!-- СЕГОДНЯ -->
+  <!-- =========================
+       СТАТУС СЕГОДНЯ
+  ========================== -->
+
+  <div
+    id="dailyStatus"
+    class="daily-status"
+  >
+
+    <div
+      id="dailyStatusTitle"
+      class="daily-status-title"
+    ></div>
+
+
+    <div
+      id="dailyStatusText"
+    ></div>
+
+  </div>
+
+
+  <!-- =========================
+       СЕГОДНЯ
+  ========================== -->
 
   <div
     id="todaySection"
     class="section"
-    style="display: none;"
+    style="display:none;"
   >
 
-    <h2 class="section-title today-title">
+    <h2
+      class="section-title today-title"
+    >
       🎉 Сегодня нужно поздравить
     </h2>
+
 
     <div id="todayList"></div>
 
   </div>
 
 
-  <!-- СКОРО -->
+  <!-- =========================
+       СКОРО
+  ========================== -->
 
   <div
     id="soonSection"
     class="section"
-    style="display: none;"
+    style="display:none;"
   >
 
-    <h2 class="section-title soon-title">
+    <h2
+      class="section-title soon-title"
+    >
       📅 Скоро
     </h2>
 
+
     <div id="soonList"></div>
+
+
+    <button
+      id="soonMoreButton"
+      class="more-button"
+      style="display:none;"
+    >
+      Показать ещё
+    </button>
 
   </div>
 
 
-  <!-- УЖЕ ПОЗДРАВИЛИ -->
+  <!-- =========================
+       УЖЕ ПОЗДРАВИЛИ
+  ========================== -->
 
   <div
     id="doneSection"
     class="section"
-    style="display: none;"
+    style="display:none;"
   >
 
-    <h2 class="section-title done-title">
-      ✅ Уже поздравили
+    <h2
+      class="section-title done-title"
+    >
+      ✅ Уже поздравили сегодня
     </h2>
+
 
     <div id="doneList"></div>
 
   </div>
 
 
-  <!-- ИСТОРИЯ -->
+  <!-- =========================
+       СТАТИСТИКА
+  ========================== -->
 
   <div
-    id="historySection"
+    id="statsSection"
     class="section"
-    style="display: none;"
+    style="display:none;"
   >
 
-    <h2 class="section-title history-title">
-      📚 История поздравлений
-      <span
-        id="historyCounter"
-        class="counter"
-      >
-        0
-      </span>
+    <h2
+      class="section-title stats-title"
+    >
+      📊 Статистика
     </h2>
 
-    <div id="historyList"></div>
 
-  </div>
+    <div class="stats-grid">
+
+      <div class="stat">
+
+        <div
+          id="statFriends"
+          class="stat-number"
+        >
+          0
+        </div>
+
+        <div class="stat-label">
+          друзей
+        </div>
+
+      </div>
 
 
-  <!-- ЕСЛИ НИКОГО НЕТ -->
+      <div class="stat">
 
-  <div
-    id="nothingSection"
-    class="section"
-    style="display: none;"
-  >
+        <div
+          id="statBirthdays"
+          class="stat-number"
+        >
+          0
+        </div>
 
-    <div class="empty">
+        <div class="stat-label">
+          с датой рождения
+        </div>
 
-      ☕ Сегодня никого поздравлять не нужно.
+      </div>
 
-      <br><br>
 
-      Можно спокойно заниматься своими делами.
+      <div class="stat">
+
+        <div
+          id="statDone"
+          class="stat-number"
+        >
+          0
+        </div>
+
+        <div class="stat-label">
+          поздравлено в этом году
+        </div>
+
+      </div>
 
     </div>
 
   </div>
 
 
-  <!-- ВЕСЬ СПИСОК -->
+  <!-- =========================
+       ИСТОРИЯ
+  ========================== -->
+
+  <div
+    id="historySection"
+    class="section"
+    style="display:none;"
+  >
+
+    <div class="history-header">
+
+      <h2
+        class="section-title history-title"
+        style="margin-bottom:0;"
+      >
+
+        📚 История поздравлений
+
+        <span
+          id="historyCounter"
+          class="counter"
+        >
+          0
+        </span>
+
+      </h2>
+
+
+      <button
+        id="historyToggle"
+        class="history-toggle"
+      >
+        Показать
+      </button>
+
+    </div>
+
+
+    <div
+      id="historyList"
+      class="history-list"
+    ></div>
+
+  </div>
+
+
+  <!-- =========================
+       ВСЕ ДРУЗЬЯ
+  ========================== -->
 
   <div
     id="allSection"
     class="section"
-    style="display: none;"
+    style="display:none;"
   >
 
-    <h2 class="section-title">
+    <h2
+      class="section-title"
+    >
       👥 Все друзья с датой рождения
     </h2>
+
 
     <div
       id="allList"
       class="all-list"
     ></div>
+
 
     <button
       id="allButton"
@@ -499,263 +980,228 @@
 
   </div>
 
+
 </div>
 
 
 <script>
 
+
+  /* =================================================
+     НАСТРОЙКИ
+  ================================================= */
+
   const APP_ID = 54728607;
+
   const API_VERSION = "5.199";
+
+  const FRIENDS_CACHE_KEY =
+    "pozdravlyalka_friends_cache_v3";
+
+  const HISTORY_KEY =
+    "pozdravlyalka_history_v3";
+
+
+  /* =================================================
+     ЭЛЕМЕНТЫ
+  ================================================= */
 
   const startButton =
     document.getElementById("start");
 
+
+  const refreshButton =
+    document.getElementById("refresh");
+
+
   const status =
     document.getElementById("status");
 
+
+  const dailyStatus =
+    document.getElementById("dailyStatus");
+
+
+  const dailyStatusTitle =
+    document.getElementById(
+      "dailyStatusTitle"
+    );
+
+
+  const dailyStatusText =
+    document.getElementById(
+      "dailyStatusText"
+    );
+
+
   const todaySection =
-    document.getElementById("todaySection");
+    document.getElementById(
+      "todaySection"
+    );
+
 
   const soonSection =
-    document.getElementById("soonSection");
+    document.getElementById(
+      "soonSection"
+    );
+
 
   const doneSection =
-    document.getElementById("doneSection");
+    document.getElementById(
+      "doneSection"
+    );
+
+
+  const statsSection =
+    document.getElementById(
+      "statsSection"
+    );
+
 
   const historySection =
-    document.getElementById("historySection");
+    document.getElementById(
+      "historySection"
+    );
 
-  const nothingSection =
-    document.getElementById("nothingSection");
 
   const allSection =
-    document.getElementById("allSection");
+    document.getElementById(
+      "allSection"
+    );
+
 
   const todayList =
-    document.getElementById("todayList");
+    document.getElementById(
+      "todayList"
+    );
+
 
   const soonList =
-    document.getElementById("soonList");
+    document.getElementById(
+      "soonList"
+    );
+
 
   const doneList =
-    document.getElementById("doneList");
+    document.getElementById(
+      "doneList"
+    );
 
-  const historyList =
-    document.getElementById("historyList");
-
-  const historyCounter =
-    document.getElementById("historyCounter");
 
   const allList =
-    document.getElementById("allList");
+    document.getElementById(
+      "allList"
+    );
+
 
   const allButton =
-    document.getElementById("allButton");
+    document.getElementById(
+      "allButton"
+    );
 
+
+  const soonMoreButton =
+    document.getElementById(
+      "soonMoreButton"
+    );
+
+
+  const historyList =
+    document.getElementById(
+      "historyList"
+    );
+
+
+  const historyCounter =
+    document.getElementById(
+      "historyCounter"
+    );
+
+
+  const historyToggle =
+    document.getElementById(
+      "historyToggle"
+    );
+
+
+  const statFriends =
+    document.getElementById(
+      "statFriends"
+    );
+
+
+  const statBirthdays =
+    document.getElementById(
+      "statBirthdays"
+    );
+
+
+  const statDone =
+    document.getElementById(
+      "statDone"
+    );
+
+
+  /* =================================================
+     ДАННЫЕ
+  ================================================= */
 
   let allFriends = [];
 
-
-  // ==================================================
-  // ИСТОРИЯ ПОЗДРАВЛЕНИЙ
-  // ==================================================
-
-  const HISTORY_KEY =
-    "pozdravlyalka_history_v2";
+  let soonShowingAll = false;
 
 
-  function getHistory() {
-
-    try {
-
-      return JSON.parse(
-        localStorage.getItem(
-          HISTORY_KEY
-        )
-      ) || {};
-
-    } catch (error) {
-
-      console.error(
-        "Ошибка чтения истории:",
-        error
-      );
-
-      return {};
-
-    }
-
-  }
-
-
-  function saveHistory(
-    history
-  ) {
-
-    localStorage.setItem(
-      HISTORY_KEY,
-      JSON.stringify(history)
-    );
-
-  }
-
-
-  /*
-    Формируем уникальный ключ события.
-
-    Например:
-
-    123456_20.08_2026
-
-    Это означает:
-
-    пользователь VK 123456
-    день рождения 20 августа
-    событие 2026 года
-  */
-
-  function getBirthdayEventKey(
-    friend,
-    info
-  ) {
-
-    return (
-      String(friend.id) +
-      "_" +
-      String(info.day) +
-      "." +
-      String(info.month) +
-      "_" +
-      String(
-        info.birthdayDate.getFullYear()
-      )
-    );
-
-  }
-
-
-  function isCongratulated(
-    friend,
-    info
-  ) {
-
-    const history =
-      getHistory();
-
-    const key =
-      getBirthdayEventKey(
-        friend,
-        info
-      );
-
-    return Boolean(
-      history[key]
-    );
-
-  }
-
-
-  function markCongratulated(
-    friend,
-    info
-  ) {
-
-    const history =
-      getHistory();
-
-    const key =
-      getBirthdayEventKey(
-        friend,
-        info
-      );
-
-
-    history[key] = {
-
-      friendId:
-        friend.id,
-
-      firstName:
-        friend.first_name,
-
-      lastName:
-        friend.last_name,
-
-      birthday:
-        info.day +
-        "." +
-        info.month,
-
-      birthdayYear:
-        info.birthdayDate.getFullYear(),
-
-      markedAt:
-        new Date().toISOString()
-
-    };
-
-
-    saveHistory(
-      history
-    );
-
-  }
-
-
-  function unmarkCongratulated(
-    friend,
-    info
-  ) {
-
-    const history =
-      getHistory();
-
-    const key =
-      getBirthdayEventKey(
-        friend,
-        info
-      );
-
-
-    delete history[key];
-
-
-    saveHistory(
-      history
-    );
-
-  }
-
-
-  // ==================================================
-  // ИНИЦИАЛИЗАЦИЯ VK
-  // ==================================================
+  /* =================================================
+     ИНИЦИАЛИЗАЦИЯ
+  ================================================= */
 
   async function initApp() {
 
     try {
 
-      status.textContent =
-        "Подключаемся к VK...";
-
-
-      const result =
-        await vkBridge.send(
-          "VKWebAppInit"
-        );
-
-
-      console.log(
-        "VK Bridge:",
-        result
+      await vkBridge.send(
+        "VKWebAppInit"
       );
 
 
-      status.textContent =
-        "Приложение подключено. Можно загрузить дни рождения.";
+      const cached =
+        getCachedFriends();
 
 
-      startButton.disabled = false;
+      if (
+        cached &&
+        cached.length > 0
+      ) {
+
+        allFriends =
+          cached;
+
+
+        startButton.style.display =
+          "none";
+
+
+        refreshButton.style.display =
+          "inline-block";
+
+
+        status.innerHTML =
+          "Данные загружены из памяти приложения.";
+
+
+        renderAll();
+
+
+      } else {
+
+        startButton.textContent =
+          "Загрузить друзей";
+
+
+        status.textContent =
+          "Приложение подключено. Первый раз нужно загрузить друзей.";
+
+      }
 
 
     } catch (error) {
@@ -775,13 +1221,96 @@
   }
 
 
-  // ==================================================
-  // ЗАГРУЗКА ДРУЗЕЙ
-  // ==================================================
+  /* =================================================
+     КЭШ ДРУЗЕЙ
+  ================================================= */
 
-  async function start() {
+  function getCachedFriends() {
 
-    startButton.disabled = true;
+    try {
+
+      const raw =
+        localStorage.getItem(
+          FRIENDS_CACHE_KEY
+        );
+
+
+      if (!raw) {
+
+        return null;
+
+      }
+
+
+      const data =
+        JSON.parse(
+          raw
+        );
+
+
+      return data.friends || null;
+
+
+    } catch (error) {
+
+      console.error(
+        "Ошибка чтения кэша:",
+        error
+      );
+
+
+      return null;
+
+    }
+
+  }
+
+
+  function saveFriendsToCache(
+    friends
+  ) {
+
+    try {
+
+      localStorage.setItem(
+        FRIENDS_CACHE_KEY,
+
+        JSON.stringify({
+
+          savedAt:
+            new Date().toISOString(),
+
+          friends:
+            friends
+
+        })
+
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Не удалось сохранить друзей:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /* =================================================
+     ПОЛУЧЕНИЕ ДРУЗЕЙ ИЗ VK
+  ================================================= */
+
+  async function loadFriends() {
+
+    startButton.disabled =
+      true;
+
+
+    refreshButton.disabled =
+      true;
 
 
     status.textContent =
@@ -794,8 +1323,11 @@
         await vkBridge.send(
           "VKWebAppGetAuthToken",
           {
-            app_id: APP_ID,
-            scope: "friends"
+            app_id:
+              APP_ID,
+
+            scope:
+              "friends"
           }
         );
 
@@ -813,14 +1345,16 @@
 
 
       status.textContent =
-        "Получаем список друзей...";
+        "Получаем свежий список друзей из VK...";
 
 
       const result =
         await vkBridge.send(
           "VKWebAppCallAPIMethod",
           {
-            method: "friends.get",
+
+            method:
+              "friends.get",
 
             params: {
 
@@ -842,12 +1376,6 @@
         );
 
 
-      console.log(
-        "Ответ friends.get:",
-        result
-      );
-
-
       if (
         !result ||
         !result.response
@@ -867,27 +1395,29 @@
         result.response.items || [];
 
 
-      const withBirthday =
-        allFriends.filter(
-          friend =>
-            friend.bdate
-        );
+      saveFriendsToCache(
+        allFriends
+      );
+
+
+      startButton.style.display =
+        "none";
+
+
+      refreshButton.style.display =
+        "inline-block";
 
 
       status.innerHTML =
-
-        "👥 Друзей: <b>" +
-        allFriends.length +
-        "</b><br>" +
-
-        "🎂 С датой рождения: <b>" +
-        withBirthday.length +
+        "Данные успешно обновлены.<br>" +
+        "Последнее обновление: <b>" +
+        formatDateTime(
+          new Date()
+        ) +
         "</b>";
 
 
-      renderBirthdays(
-        withBirthday
-      );
+      renderAll();
 
 
     } catch (error) {
@@ -899,23 +1429,56 @@
 
 
       showError(
-        "Не получилось получить друзей VK.",
+        "Не получилось обновить список друзей.",
         error
       );
 
 
     } finally {
 
-      startButton.disabled = false;
+      startButton.disabled =
+        false;
+
+
+      refreshButton.disabled =
+        false;
 
     }
 
   }
 
 
-  // ==================================================
-  // ИНФОРМАЦИЯ О ДНЕ РОЖДЕНИЯ
-  // ==================================================
+  /* =================================================
+     РЕНДЕР ВСЕГО ПРИЛОЖЕНИЯ
+  ================================================= */
+
+  function renderAll() {
+
+    const withBirthday =
+      allFriends.filter(
+        friend =>
+          friend.bdate
+      );
+
+
+    renderBirthdays(
+      withBirthday
+    );
+
+
+    renderStatistics(
+      withBirthday
+    );
+
+
+    renderHistory();
+
+  }
+
+
+  /* =================================================
+     ИНФОРМАЦИЯ О ДНЕ РОЖДЕНИЯ
+  ================================================= */
 
   function getBirthdayInfo(
     bdate
@@ -930,8 +1493,10 @@
     const day =
       parts[0];
 
+
     const month =
       parts[1];
+
 
     const birthYear =
       parts.length >= 3
@@ -996,7 +1561,8 @@
     ) {
 
       age =
-        birthdayDate.getFullYear() -
+        birthdayDate.getFullYear()
+        -
         birthYear;
 
     }
@@ -1005,10 +1571,15 @@
     return {
 
       day,
+
       month,
+
       birthYear,
+
       birthdayDate,
+
       daysUntil,
+
       age
 
     };
@@ -1016,9 +1587,77 @@
   }
 
 
-  // ==================================================
-  // ТЕКСТ СРОКА
-  // ==================================================
+  /* =================================================
+     ДАТА
+  ================================================= */
+
+  function formatDate(
+    info
+  ) {
+
+    const months = [
+
+      "января",
+      "февраля",
+      "марта",
+      "апреля",
+      "мая",
+      "июня",
+      "июля",
+      "августа",
+      "сентября",
+      "октября",
+      "ноября",
+      "декабря"
+
+    ];
+
+
+    return (
+
+      info.day +
+
+      " " +
+
+      months[
+        info.month - 1
+      ]
+
+    );
+
+  }
+
+
+  function formatDateTime(
+    date
+  ) {
+
+    return date.toLocaleString(
+      "ru-RU",
+      {
+        day:
+          "2-digit",
+
+        month:
+          "2-digit",
+
+        year:
+          "numeric",
+
+        hour:
+          "2-digit",
+
+        minute:
+          "2-digit"
+      }
+    );
+
+  }
+
+
+  /* =================================================
+     ТЕКСТ «СКОРО»
+  ================================================= */
 
   function getWhenText(
     daysUntil
@@ -1052,12 +1691,17 @@
 
 
     return (
+
       "Через " +
+
       daysUntil +
+
       " " +
+
       pluralizeDays(
         daysUntil
       )
+
     );
 
   }
@@ -1069,6 +1713,7 @@
 
     const lastTwo =
       number % 100;
+
 
     const last =
       number % 10;
@@ -1108,46 +1753,9 @@
   }
 
 
-  // ==================================================
-  // ДАТА
-  // ==================================================
-
-  function formatDate(
-    info
-  ) {
-
-    const months = [
-
-      "января",
-      "февраля",
-      "марта",
-      "апреля",
-      "мая",
-      "июня",
-      "июля",
-      "августа",
-      "сентября",
-      "октября",
-      "ноября",
-      "декабря"
-
-    ];
-
-
-    return (
-      info.day +
-      " " +
-      months[
-        info.month - 1
-      ]
-    );
-
-  }
-
-
-  // ==================================================
-  // ВОЗРАСТ
-  // ==================================================
+  /* =================================================
+     ВОЗРАСТ
+  ================================================= */
 
   function pluralizeYears(
     number
@@ -1155,6 +1763,7 @@
 
     const lastTwo =
       number % 100;
+
 
     const last =
       number % 10;
@@ -1194,9 +1803,917 @@
   }
 
 
-  // ==================================================
-  // ГЕНЕРАТОР ПОЗДРАВЛЕНИЙ
-  // ==================================================
+  /* =================================================
+     ИСТОРИЯ
+  ================================================= */
+
+  function getHistory() {
+
+    try {
+
+      return JSON.parse(
+        localStorage.getItem(
+          HISTORY_KEY
+        )
+      ) || {};
+
+
+    } catch (error) {
+
+      return {};
+
+    }
+
+  }
+
+
+  function saveHistory(
+    history
+  ) {
+
+    localStorage.setItem(
+      HISTORY_KEY,
+
+      JSON.stringify(
+        history
+      )
+    );
+
+  }
+
+
+  function getBirthdayEventKey(
+    friend,
+    info
+  ) {
+
+    return (
+
+      String(friend.id) +
+
+      "_" +
+
+      String(info.day) +
+
+      "." +
+
+      String(info.month) +
+
+      "_" +
+
+      String(
+        info.birthdayDate
+          .getFullYear()
+      )
+
+    );
+
+  }
+
+
+  function isCongratulated(
+    friend,
+    info
+  ) {
+
+    const history =
+      getHistory();
+
+
+    const key =
+      getBirthdayEventKey(
+        friend,
+        info
+      );
+
+
+    return Boolean(
+      history[key]
+    );
+
+  }
+
+
+  function markCongratulated(
+    friend,
+    info
+  ) {
+
+    const history =
+      getHistory();
+
+
+    const key =
+      getBirthdayEventKey(
+        friend,
+        info
+      );
+
+
+    history[key] = {
+
+      friendId:
+        friend.id,
+
+      firstName:
+        friend.first_name,
+
+      lastName:
+        friend.last_name,
+
+      birthday:
+        info.day +
+        "." +
+        info.month,
+
+      birthdayYear:
+        info.birthdayDate
+          .getFullYear(),
+
+      markedAt:
+        new Date()
+          .toISOString()
+
+    };
+
+
+    saveHistory(
+      history
+    );
+
+  }
+
+
+  function unmarkCongratulated(
+    friend,
+    info
+  ) {
+
+    const history =
+      getHistory();
+
+
+    const key =
+      getBirthdayEventKey(
+        friend,
+        info
+      );
+
+
+    delete history[key];
+
+
+    saveHistory(
+      history
+    );
+
+  }
+
+
+  /* =================================================
+     СЕГОДНЯ / СКОРО
+  ================================================= */
+
+  function renderBirthdays(
+    friends
+  ) {
+
+    todayList.innerHTML =
+      "";
+
+    soonList.innerHTML =
+      "";
+
+    doneList.innerHTML =
+      "";
+
+
+    todaySection.style.display =
+      "none";
+
+
+    soonSection.style.display =
+      "none";
+
+
+    doneSection.style.display =
+      "none";
+
+
+    soonMoreButton.style.display =
+      "none";
+
+
+    dailyStatus.className =
+      "daily-status";
+
+
+    const prepared =
+      friends
+
+        .map(
+          friend => ({
+
+            friend,
+
+            info:
+              getBirthdayInfo(
+                friend.bdate
+              )
+
+          })
+        )
+
+        .sort(
+          (a, b) =>
+
+            a.info.daysUntil -
+
+            b.info.daysUntil
+
+        );
+
+
+    /* =========================
+       СЕГОДНЯ
+    ========================== */
+
+    const todayAll =
+      prepared.filter(
+        item =>
+          item.info.daysUntil === 0
+      );
+
+
+    const todayPending =
+      todayAll.filter(
+        item =>
+          !isCongratulated(
+            item.friend,
+            item.info
+          )
+      );
+
+
+    const todayDone =
+      todayAll.filter(
+        item =>
+          isCongratulated(
+            item.friend,
+            item.info
+          )
+      );
+
+
+    /* =========================
+       СТАТУС СЕГОДНЯ
+    ========================== */
+
+    if (
+      todayAll.length === 0
+    ) {
+
+      dailyStatus.className =
+        "daily-status empty";
+
+
+      dailyStatusTitle.textContent =
+        "☕ Сегодня никого поздравлять не нужно.";
+
+
+      dailyStatusText.textContent =
+        "Можно спокойно заниматься своими делами.";
+
+    }
+
+
+    else if (
+      todayPending.length === 0
+    ) {
+
+      dailyStatus.className =
+        "daily-status success";
+
+
+      dailyStatusTitle.textContent =
+        "🎉 Все сегодняшние поздравления выполнены!";
+
+
+      dailyStatusText.textContent =
+        "Ты никого не забыла — можно спокойно заниматься своими делами. ❤️";
+
+    }
+
+
+    else {
+
+      dailyStatus.className =
+        "daily-status success";
+
+
+      dailyStatusTitle.textContent =
+        "🎂 Сегодня есть именинники!";
+
+
+      dailyStatusText.textContent =
+        "Осталось поздравить: " +
+        todayPending.length +
+        ".";
+
+    }
+
+
+    /* =========================
+       СПИСОК СЕГОДНЯ
+    ========================== */
+
+    if (
+      todayPending.length > 0
+    ) {
+
+      todaySection.style.display =
+        "block";
+
+
+      todayPending.forEach(
+        item =>
+
+          todayList.appendChild(
+
+            createFriendCard(
+              item.friend,
+              item.info
+            )
+
+          )
+
+      );
+
+    }
+
+
+    /* =========================
+       УЖЕ ПОЗДРАВИЛИ
+    ========================== */
+
+    if (
+      todayDone.length > 0
+    ) {
+
+      doneSection.style.display =
+        "block";
+
+
+      todayDone.forEach(
+        item =>
+
+          doneList.appendChild(
+
+            createFriendCard(
+              item.friend,
+              item.info
+            )
+
+          )
+
+      );
+
+    }
+
+
+    /* =========================
+       СКОРО
+       ПО УМОЛЧАНИЮ 7 ДНЕЙ
+    ========================== */
+
+    const soonAll =
+      prepared.filter(
+        item =>
+
+          item.info.daysUntil >= 1 &&
+
+          item.info.daysUntil <= 30
+
+      );
+
+
+    if (
+      soonAll.length > 0
+    ) {
+
+      soonSection.style.display =
+        "block";
+
+
+      renderSoon(
+        soonAll
+      );
+
+    }
+
+
+    /* =========================
+       ВСЕ ДРУЗЬЯ
+    ========================== */
+
+    allList.innerHTML =
+      "";
+
+
+    prepared.forEach(
+      item =>
+
+        allList.appendChild(
+
+          createFriendCard(
+            item.friend,
+            item.info
+          )
+
+        )
+
+    );
+
+
+    allSection.style.display =
+      "block";
+
+  }
+
+
+  /* =================================================
+     РЕНДЕР «СКОРО»
+  ================================================= */
+
+  function renderSoon(
+    list
+  ) {
+
+    soonList.innerHTML =
+      "";
+
+
+    const visible =
+      soonShowingAll
+        ? list
+        : list.slice(
+            0,
+            7
+          );
+
+
+    visible.forEach(
+      item =>
+
+        soonList.appendChild(
+
+          createFriendCard(
+            item.friend,
+            item.info
+          )
+
+        )
+
+    );
+
+
+    if (
+      list.length > 7
+    ) {
+
+      soonMoreButton.style.display =
+        "block";
+
+
+      soonMoreButton.textContent =
+        soonShowingAll
+
+          ? "Скрыть дальние дни рождения"
+
+          : "Показать ещё";
+
+    }
+
+  }
+
+
+  /* =================================================
+     СТАТИСТИКА
+  ================================================= */
+
+  function renderStatistics(
+    friends
+  ) {
+
+    statsSection.style.display =
+      "block";
+
+
+    statFriends.textContent =
+      allFriends.length;
+
+
+    statBirthdays.textContent =
+      friends.length;
+
+
+    const history =
+      getHistory();
+
+
+    const currentYear =
+      new Date()
+        .getFullYear();
+
+
+    const doneThisYear =
+      Object.values(
+        history
+      ).filter(
+        item =>
+          item.birthdayYear ===
+          currentYear
+      ).length;
+
+
+    statDone.textContent =
+      doneThisYear;
+
+  }
+
+
+  /* =================================================
+     КАРТОЧКА ДРУГА
+  ================================================= */
+
+  function createFriendCard(
+    friend,
+    info
+  ) {
+
+    const done =
+      isCongratulated(
+        friend,
+        info
+      );
+
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+
+    div.className =
+      "friend" +
+
+      (
+        done
+          ? " done-card"
+          : ""
+      );
+
+
+    const profileUrl =
+      friend.domain
+
+        ? "https://vk.ru/" +
+          friend.domain
+
+        : "https://vk.ru/id" +
+          friend.id;
+
+
+    const avatar =
+      friend.photo_200 ||
+      "";
+
+
+    const ageText =
+      info.age !== null
+
+        ? "🎂 " +
+          info.age +
+          " " +
+          pluralizeYears(
+            info.age
+          )
+
+        : "🎂 Возраст неизвестен";
+
+
+    div.innerHTML = `
+
+      <div class="friend-main">
+
+        ${
+          avatar
+
+            ? `
+
+              <img
+                class="avatar"
+                src="${escapeHtml(
+                  avatar
+                )}"
+                alt=""
+              >
+
+            `
+
+            : `
+
+              <div
+                class="avatar"
+              ></div>
+
+            `
+        }
+
+
+        <div class="friend-info">
+
+          <div class="friend-name">
+
+            <a
+              href="${escapeHtml(
+                profileUrl
+              )}"
+              target="_blank"
+            >
+
+              ${escapeHtml(
+                friend.first_name +
+                " " +
+                friend.last_name
+              )}
+
+            </a>
+
+          </div>
+
+
+          <div class="birthday">
+
+            ${formatDate(
+              info
+            )}
+
+            ·
+
+            <strong>
+              ${ageText}
+            </strong>
+
+            <br>
+
+
+            ${
+              done
+
+                ? `
+
+                  <span
+                    class="done-label"
+                  >
+                    ✅ Уже поздравили
+                  </span>
+
+                `
+
+                : `
+
+                  <span
+                    class="when"
+                  >
+                    ${getWhenText(
+                      info.daysUntil
+                    )}
+                  </span>
+
+                `
+
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="actions">
+
+
+        ${
+          done
+
+            ? `
+
+              <button
+                class="undo-button"
+                onclick="undoCongratulation(
+                  ${friend.id}
+                )"
+              >
+
+                ↩ Отменить отметку
+
+              </button>
+
+            `
+
+            : `
+
+              <button
+                class="generate-button"
+                onclick="toggleGenerator(
+                  ${friend.id}
+                )"
+              >
+
+                ✨ Создать поздравление
+
+              </button>
+
+            `
+
+        }
+
+
+        <button
+          class="dialog-button"
+          onclick="openDialog(
+            ${friend.id}
+          )"
+        >
+
+          💬 Открыть диалог
+
+        </button>
+
+
+        ${
+          !done
+
+            ? `
+
+              <button
+                class="done-button"
+                onclick="congratulated(
+                  ${friend.id}
+                )"
+              >
+
+                ✅ Я поздравила
+
+              </button>
+
+            `
+
+            : ""
+
+        }
+
+      </div>
+
+
+      ${
+        !done
+
+          ? `
+
+            <div
+              id="generator-${friend.id}"
+              class="generator"
+            >
+
+              <div
+                class="generator-title"
+              >
+
+                ✨ Какое поздравление сделать?
+
+              </div>
+
+
+              <div
+                class="style-buttons"
+              >
+
+                <button
+                  class="style-button active"
+                  onclick="selectStyle(
+                    ${friend.id},
+                    'warm',
+                    this
+                  )"
+                >
+                  ❤️ Душевное
+                </button>
+
+
+                <button
+                  class="style-button"
+                  onclick="selectStyle(
+                    ${friend.id},
+                    'friendly',
+                    this
+                  )"
+                >
+                  🥳 Дружеское
+                </button>
+
+
+                <button
+                  class="style-button"
+                  onclick="selectStyle(
+                    ${friend.id},
+                    'funny',
+                    this
+                  )"
+                >
+                  😂 С юмором
+                </button>
+
+
+                <button
+                  class="style-button"
+                  onclick="selectStyle(
+                    ${friend.id},
+                    'short',
+                    this
+                  )"
+                >
+                  ✨ Короткое
+                </button>
+
+              </div>
+
+
+              <div
+                id="message-${friend.id}"
+                class="message"
+              >
+
+                ${escapeHtml(
+                  generateGreeting(
+                    friend,
+                    "warm"
+                  )
+                )}
+
+              </div>
+
+
+              <div
+                class="generator-actions"
+              >
+
+                <button
+                  class="copy-button"
+                  onclick="copyGreeting(
+                    ${friend.id}
+                  )"
+                >
+
+                  📋 Скопировать
+
+                </button>
+
+
+                <button
+                  class="new-button"
+                  onclick="newGreeting(
+                    ${friend.id}
+                  )"
+                >
+
+                  🔄 Другой вариант
+
+                </button>
+
+              </div>
+
+            </div>
+
+          `
+
+          : ""
+
+      }
+
+    `;
+
+
+    return div;
+
+  }
+
+
+  /* =================================================
+     ГЕНЕРАТОР
+  ================================================= */
 
   const greetingTemplates = {
 
@@ -1274,283 +2791,14 @@
   }
 
 
-  // ==================================================
-  // КАРТОЧКА ДРУГА
-  // ==================================================
-
-  function createFriendCard(
-    friend,
-    info
-  ) {
-
-    const done =
-      isCongratulated(
-        friend,
-        info
-      );
-
-
-    const div =
-      document.createElement("div");
-
-
-    div.className =
-      "friend" +
-      (
-        done
-          ? " done-card"
-          : ""
-      );
-
-
-    const profileUrl =
-      friend.domain
-        ? "https://vk.ru/" +
-          friend.domain
-        : "https://vk.ru/id" +
-          friend.id;
-
-
-    const avatar =
-      friend.photo_200 ||
-      "";
-
-
-    const ageText =
-      info.age !== null
-        ? "🎂 " +
-          info.age +
-          " " +
-          pluralizeYears(
-            info.age
-          )
-        : "🎂 Возраст неизвестен";
-
-
-    div.innerHTML = `
-
-      <div class="friend-main">
-
-        ${
-          avatar
-            ? `
-              <img
-                class="avatar"
-                src="${escapeHtml(avatar)}"
-                alt=""
-              >
-            `
-            : `
-              <div class="avatar"></div>
-            `
-        }
-
-
-        <div class="friend-info">
-
-          <div class="friend-name">
-
-            <a
-              href="${escapeHtml(profileUrl)}"
-              target="_blank"
-            >
-              ${escapeHtml(
-                friend.first_name +
-                " " +
-                friend.last_name
-              )}
-            </a>
-
-          </div>
-
-
-          <div class="birthday">
-
-            ${formatDate(info)}
-
-            ·
-
-            <strong>
-              ${ageText}
-            </strong>
-
-            <br>
-
-            ${
-              done
-                ? `
-                  <span class="done-label">
-                    ✅ Уже поздравили
-                  </span>
-                `
-                : `
-                  <span class="when">
-                    ${getWhenText(
-                      info.daysUntil
-                    )}
-                  </span>
-                `
-            }
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="actions">
-
-        ${
-          done
-            ? `
-              <button
-                class="undo-button"
-                onclick="undoCongratulation(${friend.id})"
-              >
-                ↩ Отменить отметку
-              </button>
-            `
-            : `
-              <button
-                class="generate-button"
-                onclick="toggleGenerator(${friend.id})"
-              >
-                ✨ Создать поздравление
-              </button>
-            `
-        }
-
-
-        <button
-          class="dialog-button"
-          onclick="openDialog(${friend.id})"
-        >
-          💬 Открыть диалог
-        </button>
-
-
-        ${
-          !done
-            ? `
-              <button
-                class="done-button"
-                onclick="congratulated(${friend.id})"
-              >
-                ✅ Я поздравила
-              </button>
-            `
-            : ""
-        }
-
-      </div>
-
-
-      ${
-        !done
-          ? `
-            <div
-              id="generator-${friend.id}"
-              class="generator"
-            >
-
-              <div class="generator-title">
-                ✨ Какое поздравление сделать?
-              </div>
-
-
-              <div class="style-buttons">
-
-                <button
-                  class="style-button active"
-                  onclick="selectStyle(${friend.id}, 'warm', this)"
-                >
-                  ❤️ Душевное
-                </button>
-
-
-                <button
-                  class="style-button"
-                  onclick="selectStyle(${friend.id}, 'friendly', this)"
-                >
-                  🥳 Дружеское
-                </button>
-
-
-                <button
-                  class="style-button"
-                  onclick="selectStyle(${friend.id}, 'funny', this)"
-                >
-                  😂 С юмором
-                </button>
-
-
-                <button
-                  class="style-button"
-                  onclick="selectStyle(${friend.id}, 'short', this)"
-                >
-                  ✨ Короткое
-                </button>
-
-              </div>
-
-
-              <div
-                id="message-${friend.id}"
-                class="message"
-              >
-                ${escapeHtml(
-                  generateGreeting(
-                    friend,
-                    "warm"
-                  )
-                )}
-              </div>
-
-
-              <div class="generator-actions">
-
-                <button
-                  class="copy-button"
-                  onclick="copyGreeting(${friend.id})"
-                >
-                  📋 Скопировать
-                </button>
-
-
-                <button
-                  class="new-button"
-                  onclick="newGreeting(${friend.id})"
-                >
-                  🔄 Другой вариант
-                </button>
-
-              </div>
-
-            </div>
-          `
-          : ""
-      }
-
-    `;
-
-
-    return div;
-
-  }
-
-
-  // ==================================================
-  // ГЕНЕРАТОР
-  // ==================================================
-
   function toggleGenerator(
     id
   ) {
 
     const generator =
       document.getElementById(
-        "generator-" + id
+        "generator-" +
+        id
       );
 
 
@@ -1586,13 +2834,9 @@
 
     const message =
       document.getElementById(
-        "message-" + id
+        "message-" +
+        id
       );
-
-
-    if (!message) {
-      return;
-    }
 
 
     message.textContent =
@@ -1642,13 +2886,9 @@
 
     const message =
       document.getElementById(
-        "message-" + id
+        "message-" +
+        id
       );
-
-
-    if (!message) {
-      return;
-    }
 
 
     const activeButton =
@@ -1659,11 +2899,23 @@
       );
 
 
+    const styles = [
+
+      "warm",
+      "friendly",
+      "funny",
+      "short"
+
+    ];
+
+
     let style =
       "warm";
 
 
-    if (activeButton) {
+    if (
+      activeButton
+    ) {
 
       const buttons =
         Array.from(
@@ -1679,14 +2931,6 @@
         buttons.indexOf(
           activeButton
         );
-
-
-      const styles = [
-        "warm",
-        "friendly",
-        "funny",
-        "short"
-      ];
 
 
       style =
@@ -1711,7 +2955,8 @@
 
     const message =
       document.getElementById(
-        "message-" + id
+        "message-" +
+        id
       );
 
 
@@ -1773,30 +3018,27 @@
   }
 
 
-  // ==================================================
-  // ОТКРЫТЬ ДИАЛОГ
-  // ==================================================
+  /* =================================================
+     ДИАЛОГ VK
+  ================================================= */
 
   function openDialog(
     id
   ) {
 
-    const url =
-      "https://vk.ru/im?sel=" +
-      id;
-
-
     window.open(
-      url,
+      "https://vk.ru/im?sel=" +
+      id,
+
       "_blank"
     );
 
   }
 
 
-  // ==================================================
-  // ПОЗДРАВИЛА
-  // ==================================================
+  /* =================================================
+     ПОЗДРАВИЛА
+  ================================================= */
 
   function congratulated(
     id
@@ -1826,19 +3068,14 @@
     );
 
 
-    renderBirthdays(
-      allFriends.filter(
-        item =>
-          item.bdate
-      )
-    );
+    renderAll();
 
   }
 
 
-  // ==================================================
-  // ОТМЕНИТЬ ПОЗДРАВЛЕНИЕ
-  // ==================================================
+  /* =================================================
+     ОТМЕНИТЬ
+  ================================================= */
 
   function undoCongratulation(
     id
@@ -1868,216 +3105,14 @@
     );
 
 
-    renderBirthdays(
-      allFriends.filter(
-        item =>
-          item.bdate
-      )
-    );
+    renderAll();
 
   }
 
 
-  // ==================================================
-  // ОТРИСОВКА
-  // ==================================================
-
-  function renderBirthdays(
-    friends
-  ) {
-
-    todayList.innerHTML = "";
-    soonList.innerHTML = "";
-    doneList.innerHTML = "";
-    historyList.innerHTML = "";
-    allList.innerHTML = "";
-
-
-    todaySection.style.display =
-      "none";
-
-    soonSection.style.display =
-      "none";
-
-    doneSection.style.display =
-      "none";
-
-    historySection.style.display =
-      "none";
-
-    nothingSection.style.display =
-      "none";
-
-    allSection.style.display =
-      "none";
-
-
-    const prepared =
-      friends
-        .map(
-          friend => ({
-
-            friend,
-
-            info:
-              getBirthdayInfo(
-                friend.bdate
-              )
-
-          })
-        )
-        .sort(
-          (a, b) =>
-            a.info.daysUntil -
-            b.info.daysUntil
-        );
-
-
-    const today =
-      prepared.filter(
-        item =>
-          item.info.daysUntil === 0 &&
-          !isCongratulated(
-            item.friend,
-            item.info
-          )
-      );
-
-
-    const soon =
-      prepared.filter(
-        item =>
-          item.info.daysUntil >= 1 &&
-          item.info.daysUntil <= 14
-      );
-
-
-    const done =
-      prepared.filter(
-        item =>
-          item.info.daysUntil === 0 &&
-          isCongratulated(
-            item.friend,
-            item.info
-          )
-      );
-
-
-    // -------------------------------
-    // СЕГОДНЯ
-    // -------------------------------
-
-    if (
-      today.length > 0
-    ) {
-
-      todaySection.style.display =
-        "block";
-
-
-      today.forEach(
-        item =>
-          todayList.appendChild(
-            createFriendCard(
-              item.friend,
-              item.info
-            )
-          )
-      );
-
-    } else {
-
-      nothingSection.style.display =
-        "block";
-
-    }
-
-
-    // -------------------------------
-    // СКОРО
-    // -------------------------------
-
-    if (
-      soon.length > 0
-    ) {
-
-      soonSection.style.display =
-        "block";
-
-
-      soon.forEach(
-        item =>
-          soonList.appendChild(
-            createFriendCard(
-              item.friend,
-              item.info
-            )
-          )
-      );
-
-    }
-
-
-    // -------------------------------
-    // УЖЕ ПОЗДРАВИЛИ СЕГОДНЯ
-    // -------------------------------
-
-    if (
-      done.length > 0
-    ) {
-
-      doneSection.style.display =
-        "block";
-
-
-      done.forEach(
-        item =>
-          doneList.appendChild(
-            createFriendCard(
-              item.friend,
-              item.info
-            )
-          )
-      );
-
-    }
-
-
-    // -------------------------------
-    // ВСЯ ИСТОРИЯ
-    // -------------------------------
-
-    renderHistory();
-
-
-    // -------------------------------
-    // ВСЕ ДРУЗЬЯ
-    // -------------------------------
-
-    prepared.forEach(
-      item =>
-        allList.appendChild(
-          createFriendCard(
-            item.friend,
-            item.info
-          )
-        )
-    );
-
-
-    allSection.style.display =
-      "block";
-
-
-    allButton.textContent =
-      "Показать всех друзей";
-
-  }
-
-
-  // ==================================================
-  // ИСТОРИЯ НА ЭКРАНЕ
-  // ==================================================
+  /* =================================================
+     ИСТОРИЯ
+  ================================================= */
 
   function renderHistory() {
 
@@ -2095,6 +3130,10 @@
       entries.length;
 
 
+    historyList.innerHTML =
+      "";
+
+
     if (
       entries.length === 0
     ) {
@@ -2108,20 +3147,26 @@
         'Пока здесь ничего нет.' +
         '</div>';
 
+
       return;
 
     }
 
 
-    entries.sort(
-      (a, b) =>
-        new Date(b.markedAt) -
-        new Date(a.markedAt)
-    );
-
-
     historySection.style.display =
       "block";
+
+
+    entries.sort(
+      (a, b) =>
+        new Date(
+          b.markedAt
+        ) -
+
+        new Date(
+          a.markedAt
+        )
+    );
 
 
     entries.forEach(
@@ -2139,15 +3184,22 @@
 
         div.innerHTML = `
 
-          <div class="history-name">
+          <div
+            class="history-name"
+          >
+
             ✅ ${escapeHtml(
               entry.firstName +
               " " +
               entry.lastName
             )}
+
           </div>
 
-          <div class="history-date">
+
+          <div
+            class="history-date"
+          >
 
             День рождения:
             ${escapeHtml(
@@ -2182,41 +3234,147 @@
     isoDate
   ) {
 
-    const date =
-      new Date(
-        isoDate
-      );
-
-
-    return date.toLocaleDateString(
+    return new Date(
+      isoDate
+    ).toLocaleDateString(
       "ru-RU",
       {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
+        day:
+          "numeric",
+
+        month:
+          "long",
+
+        year:
+          "numeric"
       }
     );
 
   }
 
 
-  // ==================================================
-  // ПОКАЗАТЬ ВСЕХ
-  // ==================================================
+  /* =================================================
+     ПОКАЗАТЬ / СКРЫТЬ ИСТОРИЮ
+  ================================================= */
+
+  historyToggle.addEventListener(
+    "click",
+    () => {
+
+      const visible =
+        historyList.classList
+          .contains(
+            "visible"
+          );
+
+
+      if (visible) {
+
+        historyList.classList
+          .remove(
+            "visible"
+          );
+
+
+        historyToggle.textContent =
+          "Показать";
+
+      } else {
+
+        historyList.classList
+          .add(
+            "visible"
+          );
+
+
+        historyToggle.textContent =
+          "Скрыть";
+
+      }
+
+    }
+  );
+
+
+  /* =================================================
+     ПОКАЗАТЬ ЕЩЁ «СКОРО»
+  ================================================= */
+
+  soonMoreButton.addEventListener(
+    "click",
+    () => {
+
+      soonShowingAll =
+        !soonShowingAll;
+
+
+      const friends =
+        allFriends.filter(
+          friend =>
+            friend.bdate
+        );
+
+
+      const prepared =
+        friends
+
+          .map(
+            friend => ({
+
+              friend,
+
+              info:
+                getBirthdayInfo(
+                  friend.bdate
+                )
+
+            })
+          )
+
+          .sort(
+            (a, b) =>
+              a.info.daysUntil -
+              b.info.daysUntil
+          );
+
+
+      const soon =
+        prepared.filter(
+          item =>
+            item.info.daysUntil >= 1 &&
+            item.info.daysUntil <= 30
+        );
+
+
+      renderSoon(
+        soon
+      );
+
+    }
+  );
+
+
+  /* =================================================
+     ПОКАЗАТЬ ВСЕХ
+  ================================================= */
 
   allButton.addEventListener(
     "click",
     () => {
 
-      if (
-        allList.classList.contains(
-          "visible"
-        )
-      ) {
+      const visible =
+        allList.classList
+          .contains(
+            "visible"
+          );
 
-        allList.classList.remove(
-          "visible"
-        );
+
+      if (visible) {
+
+        allList.classList
+          .remove(
+            "visible"
+          );
 
 
         allButton.textContent =
@@ -2224,9 +3382,10 @@
 
       } else {
 
-        allList.classList.add(
-          "visible"
-        );
+        allList.classList
+          .add(
+            "visible"
+          );
 
 
         allButton.textContent =
@@ -2238,16 +3397,17 @@
   );
 
 
-  // ==================================================
-  // ОШИБКИ
-  // ==================================================
+  /* =================================================
+     ОШИБКИ
+  ================================================= */
 
   function showError(
     title,
     error
   ) {
 
-    let errorText = "";
+    let errorText =
+      "";
 
 
     if (error) {
@@ -2260,23 +3420,18 @@
         errorText =
           error.error_data.error_msg;
 
-      } else if (
-        error.error_data &&
-        error.error_data.error_code
-      ) {
+      }
 
-        errorText =
-          "Код ошибки VK: " +
-          error.error_data.error_code;
-
-      } else if (
+      else if (
         error.message
       ) {
 
         errorText =
           error.message;
 
-      } else {
+      }
+
+      else {
 
         try {
 
@@ -2288,7 +3443,9 @@
         } catch (e) {
 
           errorText =
-            String(error);
+            String(
+              error
+            );
 
         }
 
@@ -2306,29 +3463,33 @@
 
 
     status.innerHTML =
+
       "<b>" +
-      escapeHtml(title) +
+
+      escapeHtml(
+        title
+      ) +
+
       "</b><br>" +
-      escapeHtml(errorText);
 
-
-    console.error(
-      "Подробная ошибка:",
-      error
-    );
+      escapeHtml(
+        errorText
+      );
 
   }
 
 
-  // ==================================================
-  // ЗАЩИТА HTML
-  // ==================================================
+  /* =================================================
+     ЗАЩИТА HTML
+  ================================================= */
 
   function escapeHtml(
     text
   ) {
 
-    return String(text)
+    return String(
+      text
+    )
 
       .replaceAll(
         "&",
@@ -2358,15 +3519,25 @@
   }
 
 
-  // ==================================================
-  // ЗАПУСК
-  // ==================================================
+  /* =================================================
+     КНОПКИ
+  ================================================= */
 
   startButton.addEventListener(
     "click",
-    start
+    loadFriends
   );
 
+
+  refreshButton.addEventListener(
+    "click",
+    loadFriends
+  );
+
+
+  /* =================================================
+     ЗАПУСК
+  ================================================= */
 
   initApp();
 
