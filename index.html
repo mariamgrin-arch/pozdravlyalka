@@ -76,9 +76,11 @@
     и доступные даты их рождения.
   </p>
 
-  <button id="start">Получить дни рождения друзей</button>
+  <button id="start" disabled>
+    Получить дни рождения друзей
+  </button>
 
-  <div id="status">Пока не подключено к VK.</div>
+  <div id="status">Инициализируем приложение VK...</div>
 
   <div id="friends"></div>
 </div>
@@ -90,16 +92,41 @@
   const status = document.getElementById("status");
   const friendsBox = document.getElementById("friends");
 
+  // Сначала инициализируем VK Bridge.
+  // Это происходит сразу при открытии приложения,
+  // а не после нажатия кнопки.
+  async function initApp() {
+    try {
+      status.textContent = "Подключаемся к VK...";
+
+      const result = await vkBridge.send("VKWebAppInit");
+
+      console.log("VK Bridge инициализирован:", result);
+
+      status.textContent =
+        "Приложение подключено к VK. Можно получить дни рождения.";
+
+      startButton.disabled = false;
+
+    } catch (error) {
+      console.error("Ошибка VKWebAppInit:", error);
+
+      status.innerHTML =
+        "<b>Не удалось подключить приложение к VK.</b><br>" +
+        "Ошибка: " +
+        escapeHtml(error.message || String(error));
+    }
+  }
+
+
   async function start() {
     startButton.disabled = true;
     friendsBox.innerHTML = "";
 
     try {
-      status.textContent = "Подключаемся к VK...";
 
-      await vkBridge.send("VKWebAppInit");
-
-      status.textContent = "Запрашиваем разрешение на список друзей...";
+      status.textContent =
+        "Запрашиваем разрешение на список друзей...";
 
       const auth = await vkBridge.send("VKWebAppGetAuthToken", {
         app_id: APP_ID,
@@ -138,12 +165,15 @@
         const bDay = Number(bParts[0]);
         const bMonth = Number(bParts[1]);
 
-        return (aMonth * 100 + aDay) - (bMonth * 100 + bDay);
+        return (aMonth * 100 + aDay) -
+               (bMonth * 100 + bDay);
       });
 
       status.innerHTML =
         "Всего друзей: <b>" + friends.length + "</b><br>" +
-        "Даты рождения доступны: <b>" + withBirthday.length + "</b>";
+        "Даты рождения доступны: <b>" +
+        withBirthday.length +
+        "</b>";
 
       if (withBirthday.length === 0) {
         friendsBox.innerHTML =
@@ -152,6 +182,7 @@
       }
 
       withBirthday.forEach(friend => {
+
         const div = document.createElement("div");
         div.className = "friend";
 
@@ -161,7 +192,9 @@
 
         div.innerHTML =
           "<a href=\"" + profileUrl + "\" target=\"_blank\">" +
-          escapeHtml(friend.first_name + " " + friend.last_name) +
+          escapeHtml(
+            friend.first_name + " " + friend.last_name
+          ) +
           "</a>" +
           " — <span class=\"date\">" +
           escapeHtml(friend.bdate) +
@@ -171,17 +204,20 @@
       });
 
     } catch (error) {
+
       console.error(error);
 
       status.innerHTML =
-        "<b>Не получилось подключиться к VK.</b><br>" +
+        "<b>Не получилось получить друзей VK.</b><br>" +
         "Ошибка: " +
         escapeHtml(error.message || String(error));
 
     } finally {
+
       startButton.disabled = false;
     }
   }
+
 
   function escapeHtml(text) {
     return String(text)
@@ -192,7 +228,11 @@
       .replaceAll("'", "&#039;");
   }
 
+
   startButton.addEventListener("click", start);
+
+  // Запускаем инициализацию СРАЗУ при открытии страницы.
+  initApp();
 </script>
 
 </body>
