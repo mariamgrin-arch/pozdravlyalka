@@ -9,8 +9,13 @@
   <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Arial, sans-serif;
       margin: 0;
       padding: 20px;
       background: #f5f6f8;
@@ -18,25 +23,41 @@
     }
 
     .box {
-      max-width: 700px;
+      max-width: 720px;
       margin: 0 auto;
+    }
+
+    .header {
       background: white;
       padding: 24px;
-      border-radius: 16px;
+      border-radius: 20px;
+      margin-bottom: 16px;
     }
 
     h1 {
-      margin-top: 0;
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: #626d7a;
+      line-height: 1.5;
     }
 
     button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .main-button {
+      margin-top: 18px;
       background: #447bba;
       color: white;
-      border: 0;
-      border-radius: 10px;
-      padding: 12px 18px;
-      font-size: 16px;
-      cursor: pointer;
     }
 
     button:disabled {
@@ -45,24 +66,157 @@
     }
 
     #status {
-      margin: 16px 0;
+      margin-top: 16px;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       background: #f0f2f5;
+      color: #444;
+      line-height: 1.5;
+    }
+
+    .section {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      margin: 0 0 16px;
+      font-size: 21px;
+    }
+
+    .today-title {
+      color: #e05252;
+    }
+
+    .soon-title {
+      color: #447bba;
+    }
+
+    .empty {
+      color: #818c99;
+      padding: 8px 0;
     }
 
     .friend {
-      padding: 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
       border-bottom: 1px solid #eee;
     }
 
-    .date {
-      font-weight: bold;
+    .friend:last-child {
+      border-bottom: 0;
     }
 
-    a {
-      color: #447bba;
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #e5e7eb;
+      flex-shrink: 0;
+    }
+
+    .friend-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .friend-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .friend-name a {
+      color: #222;
       text-decoration: none;
+    }
+
+    .birthday {
+      color: #626d7a;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .birthday strong {
+      color: #222;
+    }
+
+    .when {
+      color: #447bba;
+      font-weight: 600;
+    }
+
+    .today .when {
+      color: #e05252;
+    }
+
+    .dialog-button {
+      background: #447bba;
+      color: white;
+      white-space: nowrap;
+      padding: 9px 12px;
+      font-size: 13px;
+    }
+
+    .all-button {
+      width: 100%;
+      background: #f0f2f5;
+      color: #447bba;
+      margin-top: 4px;
+    }
+
+    .all-list {
+      display: none;
+    }
+
+    .all-list.visible {
+      display: block;
+    }
+
+    .stats {
+      color: #626d7a;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .no-birthdays {
+      text-align: center;
+      padding: 20px 10px;
+      color: #626d7a;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .header,
+      .section {
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .friend {
+        align-items: flex-start;
+      }
+
+      .dialog-button {
+        align-self: center;
+      }
+
+      .avatar {
+        width: 46px;
+        height: 46px;
+      }
     }
   </style>
 </head>
@@ -71,22 +225,100 @@
 
 <div class="box">
 
-  <h1>🎂 Поздравлялка 2.0</h1>
+  <!-- ШАПКА -->
+  <div class="header">
 
-  <p>
-    Приложение получает список моих друзей VK
-    и доступные даты их рождения.
-  </p>
+    <h1>🎂 Поздравлялка 2.0</h1>
 
-  <button id="start" disabled>
-    Получить дни рождения друзей
-  </button>
+    <p class="subtitle">
+      Я слежу за днями рождения твоих друзей,
+      чтобы ты ничего не забыла.
+    </p>
 
-  <div id="status">
-    Инициализируем приложение VK...
+    <button
+      id="start"
+      class="main-button"
+      disabled
+    >
+      Загрузить дни рождения
+    </button>
+
+    <div id="status">
+      Подключаемся к VK...
+    </div>
+
   </div>
 
-  <div id="friends"></div>
+
+  <!-- СЕГОДНЯ -->
+  <div
+    id="todaySection"
+    class="section"
+    style="display: none;"
+  >
+
+    <h2 class="section-title today-title">
+      🎉 Сегодня нужно поздравить
+    </h2>
+
+    <div id="todayList"></div>
+
+  </div>
+
+
+  <!-- СКОРО -->
+  <div
+    id="soonSection"
+    class="section"
+    style="display: none;"
+  >
+
+    <h2 class="section-title soon-title">
+      📅 Скоро
+    </h2>
+
+    <div id="soonList"></div>
+
+  </div>
+
+
+  <!-- ЕСЛИ СЕГОДНЯ НИКОГО НЕТ -->
+  <div
+    id="nothingSection"
+    class="section"
+    style="display: none;"
+  >
+
+    <div class="no-birthdays">
+      ☕ Сегодня никого поздравлять не нужно.
+      <br>
+      Можно спокойно заниматься своими делами.
+    </div>
+
+  </div>
+
+
+  <!-- ВЕСЬ СПИСОК -->
+  <div
+    id="allSection"
+    class="section"
+    style="display: none;"
+  >
+
+    <h2 class="section-title">
+      👥 Все друзья с датой рождения
+    </h2>
+
+    <div id="allList" class="all-list"></div>
+
+    <button
+      id="allButton"
+      class="all-button"
+    >
+      Показать всех
+    </button>
+
+  </div>
 
 </div>
 
@@ -98,31 +330,65 @@
 
   const startButton = document.getElementById("start");
   const status = document.getElementById("status");
-  const friendsBox = document.getElementById("friends");
+
+  const todaySection =
+    document.getElementById("todaySection");
+
+  const soonSection =
+    document.getElementById("soonSection");
+
+  const nothingSection =
+    document.getElementById("nothingSection");
+
+  const allSection =
+    document.getElementById("allSection");
+
+  const todayList =
+    document.getElementById("todayList");
+
+  const soonList =
+    document.getElementById("soonList");
+
+  const allList =
+    document.getElementById("allList");
+
+  const allButton =
+    document.getElementById("allButton");
 
 
-  // --------------------------------------------------
+  let allFriends = [];
+
+
+  // ==================================================
   // ИНИЦИАЛИЗАЦИЯ VK
-  // --------------------------------------------------
+  // ==================================================
 
   async function initApp() {
 
     try {
 
-      status.textContent = "Подключаемся к VK...";
+      status.textContent =
+        "Подключаемся к VK...";
 
-      const result = await vkBridge.send("VKWebAppInit");
+      const result =
+        await vkBridge.send("VKWebAppInit");
 
-      console.log("VK Bridge инициализирован:", result);
+      console.log(
+        "VK Bridge инициализирован:",
+        result
+      );
 
       status.textContent =
-        "Приложение подключено к VK. Можно получить дни рождения.";
+        "Приложение подключено. Можно загрузить дни рождения.";
 
       startButton.disabled = false;
 
     } catch (error) {
 
-      console.error("Ошибка VKWebAppInit:", error);
+      console.error(
+        "Ошибка VKWebAppInit:",
+        error
+      );
 
       showError(
         "Не удалось подключить приложение к VK.",
@@ -132,35 +398,39 @@
   }
 
 
-  // --------------------------------------------------
-  // ПОЛУЧЕНИЕ ДРУЗЕЙ
-  // --------------------------------------------------
+  // ==================================================
+  // ЗАГРУЗКА ДРУЗЕЙ
+  // ==================================================
 
   async function start() {
 
     startButton.disabled = true;
-    friendsBox.innerHTML = "";
+
+    status.textContent =
+      "Запрашиваем доступ к списку друзей...";
 
     try {
 
-      status.textContent =
-        "Запрашиваем разрешение на список друзей...";
+      const auth =
+        await vkBridge.send(
+          "VKWebAppGetAuthToken",
+          {
+            app_id: APP_ID,
+            scope: "friends"
+          }
+        );
 
 
-      // Получаем пользовательский токен
-      const auth = await vkBridge.send(
-        "VKWebAppGetAuthToken",
-        {
-          app_id: APP_ID,
-          scope: "friends"
-        }
+      console.log(
+        "Ответ авторизации:",
+        auth
       );
 
 
-      console.log("Ответ авторизации VK:", auth);
-
-
-      if (!auth || !auth.access_token) {
+      if (
+        !auth ||
+        !auth.access_token
+      ) {
 
         throw new Error(
           "VK не выдал токен доступа."
@@ -172,163 +442,75 @@
         "Получаем список друзей...";
 
 
-      // Получаем друзей через VK API
-      const result = await vkBridge.send(
-        "VKWebAppCallAPIMethod",
-        {
-          method: "friends.get",
+      const result =
+        await vkBridge.send(
+          "VKWebAppCallAPIMethod",
+          {
+            method: "friends.get",
 
-          params: {
-            access_token: auth.access_token,
-            v: API_VERSION,
+            params: {
+              access_token:
+                auth.access_token,
 
-            fields: "bdate,domain",
-            count: 5000
+              v: API_VERSION,
+
+              fields:
+                "bdate,domain,photo_200",
+
+              count: 5000
+            }
           }
-        }
+        );
+
+
+      console.log(
+        "Ответ friends.get:",
+        result
       );
 
 
-      console.log("Ответ friends.get:", result);
-
-
-      if (!result || !result.response) {
+      if (
+        !result ||
+        !result.response
+      ) {
 
         throw result || {
-          message: "VK не вернул список друзей."
+          message:
+            "VK не вернул список друзей."
         };
       }
 
 
-      const friends =
+      allFriends =
         result.response.items || [];
 
 
-      // --------------------------------------------------
-      // ОСТАВЛЯЕМ ТОЛЬКО ДРУЗЕЙ С ДАТОЙ РОЖДЕНИЯ
-      // --------------------------------------------------
-
       const withBirthday =
-        friends.filter(friend => friend.bdate);
-
-
-      // --------------------------------------------------
-      // СОРТИРОВКА ПО ДНЮ И МЕСЯЦУ
-      // --------------------------------------------------
-
-      withBirthday.sort((a, b) => {
-
-        const aParts =
-          a.bdate.split(".");
-
-        const bParts =
-          b.bdate.split(".");
-
-
-        const aDay =
-          Number(aParts[0]);
-
-        const aMonth =
-          Number(aParts[1]);
-
-
-        const bDay =
-          Number(bParts[0]);
-
-        const bMonth =
-          Number(bParts[1]);
-
-
-        return (
-          (aMonth * 100 + aDay) -
-          (bMonth * 100 + bDay)
+        allFriends.filter(
+          friend => friend.bdate
         );
 
-      });
-
-
-      // --------------------------------------------------
-      // СТАТИСТИКА
-      // --------------------------------------------------
 
       status.innerHTML =
-        "Всего друзей: <b>" +
-        friends.length +
+        "👥 Друзей: <b>" +
+        allFriends.length +
         "</b><br>" +
 
-        "Даты рождения доступны: <b>" +
+        "🎂 С датой рождения: <b>" +
         withBirthday.length +
         "</b>";
 
 
-      // --------------------------------------------------
-      // ЕСЛИ ДАТ РОЖДЕНИЯ НЕТ
-      // --------------------------------------------------
-
-      if (withBirthday.length === 0) {
-
-        friendsBox.innerHTML =
-          "<p>" +
-          "VK не вернул ни одной доступной даты рождения." +
-          "</p>";
-
-        return;
-      }
-
-
-      // --------------------------------------------------
-      // ВЫВОД ДРУЗЕЙ
-      // --------------------------------------------------
-
-      withBirthday.forEach(friend => {
-
-        const div =
-          document.createElement("div");
-
-        div.className = "friend";
-
-
-        const profileUrl =
-          friend.domain
-            ? "https://vk.ru/" + friend.domain
-            : "https://vk.ru/id" + friend.id;
-
-
-        div.innerHTML =
-
-          "<a href=\"" +
-          profileUrl +
-          "\" target=\"_blank\">" +
-
-          escapeHtml(
-            friend.first_name +
-            " " +
-            friend.last_name
-          ) +
-
-          "</a>" +
-
-          " — " +
-
-          "<span class=\"date\">" +
-
-          escapeHtml(friend.bdate) +
-
-          "</span>";
-
-
-        friendsBox.appendChild(div);
-
-      });
-
+      renderBirthdays(
+        withBirthday
+      );
 
     } catch (error) {
 
       console.error(
-        "Ошибка при получении друзей:",
+        "Ошибка:",
         error
       );
-
 
       showError(
         "Не получилось получить друзей VK.",
@@ -338,17 +520,550 @@
     } finally {
 
       startButton.disabled = false;
-
     }
-
   }
 
 
-  // --------------------------------------------------
-  // НОРМАЛЬНЫЙ ВЫВОД ОШИБКИ
-  // --------------------------------------------------
+  // ==================================================
+  // РАСЧЁТ БЛИЖАЙШЕГО ДНЯ РОЖДЕНИЯ
+  // ==================================================
 
-  function showError(title, error) {
+  function getBirthdayInfo(bdate) {
+
+    const parts =
+      bdate.split(".").map(Number);
+
+    const day = parts[0];
+    const month = parts[1];
+
+    const birthYear =
+      parts.length >= 3
+        ? parts[2]
+        : null;
+
+
+    const now = new Date();
+
+    const currentYear =
+      now.getFullYear();
+
+
+    let birthdayDate =
+      new Date(
+        currentYear,
+        month - 1,
+        day
+      );
+
+
+    // Если день рождения уже прошёл,
+    // следующий будет в следующем году.
+    if (
+      birthdayDate <
+      new Date(
+        currentYear,
+        now.getMonth(),
+        now.getDate()
+      )
+    ) {
+
+      birthdayDate =
+        new Date(
+          currentYear + 1,
+          month - 1,
+          day
+        );
+    }
+
+
+    const today =
+      new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      );
+
+
+    const difference =
+      birthdayDate - today;
+
+
+    const daysUntil =
+      Math.round(
+        difference /
+        (1000 * 60 * 60 * 24)
+      );
+
+
+    let age = null;
+
+
+    if (birthYear) {
+
+      age =
+        birthdayDate.getFullYear() -
+        birthYear;
+    }
+
+
+    return {
+      day,
+      month,
+      birthYear,
+      birthdayDate,
+      daysUntil,
+      age
+    };
+  }
+
+
+  // ==================================================
+  // ТЕКСТ "СЕГОДНЯ / ЗАВТРА / ЧЕРЕЗ N ДНЕЙ"
+  // ==================================================
+
+  function getWhenText(daysUntil) {
+
+    if (daysUntil === 0) {
+      return "Сегодня 🎉";
+    }
+
+    if (daysUntil === 1) {
+      return "Завтра";
+    }
+
+    if (daysUntil === 2) {
+      return "Послезавтра";
+    }
+
+    return "Через " +
+      daysUntil +
+      " " +
+      pluralizeDays(daysUntil);
+  }
+
+
+  function pluralizeDays(number) {
+
+    const lastTwo =
+      number % 100;
+
+    const last =
+      number % 10;
+
+
+    if (
+      lastTwo >= 11 &&
+      lastTwo <= 19
+    ) {
+
+      return "дней";
+    }
+
+
+    if (last === 1) {
+      return "день";
+    }
+
+
+    if (
+      last >= 2 &&
+      last <= 4
+    ) {
+
+      return "дня";
+    }
+
+
+    return "дней";
+  }
+
+
+  // ==================================================
+  // ФОРМАТ ДАТЫ
+  // ==================================================
+
+  function formatDate(info) {
+
+    const months = [
+      "января",
+      "февраля",
+      "марта",
+      "апреля",
+      "мая",
+      "июня",
+      "июля",
+      "августа",
+      "сентября",
+      "октября",
+      "ноября",
+      "декабря"
+    ];
+
+
+    return (
+      info.day +
+      " " +
+      months[info.month - 1]
+    );
+  }
+
+
+  // ==================================================
+  // СОЗДАНИЕ КАРТОЧКИ ДРУГА
+  // ==================================================
+
+  function createFriendCard(
+    friend,
+    info
+  ) {
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "friend" +
+      (info.daysUntil === 0
+        ? " today"
+        : "");
+
+
+    const profileUrl =
+      friend.domain
+        ? "https://vk.ru/" +
+          friend.domain
+        : "https://vk.ru/id" +
+          friend.id;
+
+
+    const dialogUrl =
+      "https://vk.ru/im?sel=" +
+      friend.id;
+
+
+    const avatar =
+      friend.photo_200 ||
+      "";
+
+
+    const ageText =
+      info.age !== null
+        ? "🎂 " +
+          info.age +
+          " " +
+          pluralizeYears(info.age)
+        : "🎂 Возраст неизвестен";
+
+
+    div.innerHTML = `
+
+      ${
+        avatar
+          ? `
+            <img
+              class="avatar"
+              src="${escapeHtml(avatar)}"
+              alt=""
+            >
+          `
+          : `
+            <div class="avatar"></div>
+          `
+      }
+
+
+      <div class="friend-info">
+
+        <div class="friend-name">
+
+          <a
+            href="${escapeHtml(profileUrl)}"
+            target="_blank"
+          >
+            ${escapeHtml(
+              friend.first_name +
+              " " +
+              friend.last_name
+            )}
+          </a>
+
+        </div>
+
+
+        <div class="birthday">
+
+          ${formatDate(info)}
+
+          ·
+
+          <strong>
+            ${ageText}
+          </strong>
+
+          <br>
+
+          <span class="when">
+            ${getWhenText(info.daysUntil)}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="dialog-button"
+        onclick="openDialog(${friend.id})"
+      >
+        💌 Поздравить
+      </button>
+
+    `;
+
+
+    return div;
+  }
+
+
+  // ==================================================
+  // ВОЗРАСТ
+  // ==================================================
+
+  function pluralizeYears(number) {
+
+    const lastTwo =
+      number % 100;
+
+    const last =
+      number % 10;
+
+
+    if (
+      lastTwo >= 11 &&
+      lastTwo <= 19
+    ) {
+
+      return "лет";
+    }
+
+
+    if (last === 1) {
+      return "год";
+    }
+
+
+    if (
+      last >= 2 &&
+      last <= 4
+    ) {
+
+      return "года";
+    }
+
+
+    return "лет";
+  }
+
+
+  // ==================================================
+  // ОТРИСОВКА ДНЕЙ РОЖДЕНИЯ
+  // ==================================================
+
+  function renderBirthdays(
+    friends
+  ) {
+
+    todayList.innerHTML = "";
+    soonList.innerHTML = "";
+    allList.innerHTML = "";
+
+
+    todaySection.style.display =
+      "none";
+
+    soonSection.style.display =
+      "none";
+
+    nothingSection.style.display =
+      "none";
+
+    allSection.style.display =
+      "none";
+
+
+    const prepared =
+      friends
+        .map(friend => {
+
+          return {
+            friend,
+            info:
+              getBirthdayInfo(
+                friend.bdate
+              )
+          };
+
+        })
+        .sort(
+          (a, b) =>
+            a.info.daysUntil -
+            b.info.daysUntil
+        );
+
+
+    const today =
+      prepared.filter(
+        item =>
+          item.info.daysUntil === 0
+      );
+
+
+    const soon =
+      prepared.filter(
+        item =>
+          item.info.daysUntil >= 1 &&
+          item.info.daysUntil <= 14
+      );
+
+
+    // -------------------------------
+    // СЕГОДНЯ
+    // -------------------------------
+
+    if (today.length > 0) {
+
+      todaySection.style.display =
+        "block";
+
+
+      today.forEach(item => {
+
+        todayList.appendChild(
+          createFriendCard(
+            item.friend,
+            item.info
+          )
+        );
+
+      });
+
+    } else {
+
+      nothingSection.style.display =
+        "block";
+    }
+
+
+    // -------------------------------
+    // СКОРО
+    // -------------------------------
+
+    if (soon.length > 0) {
+
+      soonSection.style.display =
+        "block";
+
+
+      soon.forEach(item => {
+
+        soonList.appendChild(
+          createFriendCard(
+            item.friend,
+            item.info
+          )
+        );
+
+      });
+
+    }
+
+
+    // -------------------------------
+    // ВЕСЬ СПИСОК
+    // -------------------------------
+
+    prepared.forEach(item => {
+
+      allList.appendChild(
+        createFriendCard(
+          item.friend,
+          item.info
+        )
+      );
+
+    });
+
+
+    allSection.style.display =
+      "block";
+
+
+    allButton.textContent =
+      "Показать всех друзей";
+  }
+
+
+  // ==================================================
+  // ОТКРЫТЬ ДИАЛОГ
+  // ==================================================
+
+  function openDialog(id) {
+
+    const url =
+      "https://vk.ru/im?sel=" +
+      id;
+
+
+    window.open(
+      url,
+      "_blank"
+    );
+  }
+
+
+  // ==================================================
+  // ПОКАЗАТЬ / СКРЫТЬ ВЕСЬ СПИСОК
+  // ==================================================
+
+  allButton.addEventListener(
+    "click",
+    () => {
+
+      if (
+        allList.classList.contains(
+          "visible"
+        )
+      ) {
+
+        allList.classList.remove(
+          "visible"
+        );
+
+        allButton.textContent =
+          "Показать всех друзей";
+
+      } else {
+
+        allList.classList.add(
+          "visible"
+        );
+
+        allButton.textContent =
+          "Скрыть список";
+
+      }
+
+    }
+  );
+
+
+  // ==================================================
+  // ОШИБКИ
+  // ==================================================
+
+  function showError(
+    title,
+    error
+  ) {
 
     let errorText = "";
 
@@ -372,7 +1087,9 @@
           "Код ошибки VK: " +
           error.error_data.error_code;
 
-      } else if (error.message) {
+      } else if (
+        error.message
+      ) {
 
         errorText =
           error.message;
@@ -408,43 +1125,54 @@
       "<b>" +
       escapeHtml(title) +
       "</b><br>" +
-
       escapeHtml(errorText);
 
 
-    // Дополнительно выводим подробную информацию
-    // в консоль браузера
     console.error(
       "Подробная ошибка:",
       error
     );
-
   }
 
 
-  // --------------------------------------------------
+  // ==================================================
   // ЗАЩИТА HTML
-  // --------------------------------------------------
+  // ==================================================
 
   function escapeHtml(text) {
 
     return String(text)
 
-      .replaceAll("&", "&amp;")
+      .replaceAll(
+        "&",
+        "&amp;"
+      )
 
-      .replaceAll("<", "&lt;")
+      .replaceAll(
+        "<",
+        "&lt;"
+      )
 
-      .replaceAll(">", "&gt;")
+      .replaceAll(
+        ">",
+        "&gt;"
+      )
 
-      .replaceAll('"', "&quot;")
+      .replaceAll(
+        '"',
+        "&quot;"
+      )
 
-      .replaceAll("'", "&#039;");
+      .replaceAll(
+        "'",
+        "&#039;"
+      );
   }
 
 
-  // --------------------------------------------------
-  // КНОПКА
-  // --------------------------------------------------
+  // ==================================================
+  // КНОПКА ЗАГРУЗКИ
+  // ==================================================
 
   startButton.addEventListener(
     "click",
@@ -452,9 +1180,9 @@
   );
 
 
-  // --------------------------------------------------
-  // ЗАПУСК ПРИЛОЖЕНИЯ
-  // --------------------------------------------------
+  // ==================================================
+  // ЗАПУСК
+  // ==================================================
 
   initApp();
 
