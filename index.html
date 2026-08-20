@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Поздравлялка 2.0</title>
+
+  <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f6f8;
+      color: #222;
+    }
+
+    .box {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    button {
+      background: #447bba;
+      color: white;
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    #status {
+      margin: 16px 0;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f0f2f5;
+    }
+
+    .friend {
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .date {
+      font-weight: bold;
+    }
+
+    a {
+      color: #447bba;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h1>🎂 Поздравлялка 2.0</h1>
+
+  <p>
+    Приложение получает список моих друзей VK
+    и доступные даты их рождения.
+  </p>
+
+  <button id="start">Получить дни рождения друзей</button>
+
+  <div id="status">Пока не подключено к VK.</div>
+
+  <div id="friends"></div>
+</div>
+
+<script>
+  const APP_ID = 54728607;
+
+  const startButton = document.getElementById("start");
+  const status = document.getElementById("status");
+  const friendsBox = document.getElementById("friends");
+
+  async function start() {
+    startButton.disabled = true;
+    friendsBox.innerHTML = "";
+
+    try {
+      status.textContent = "Подключаемся к VK...";
+
+      await vkBridge.send("VKWebAppInit");
+
+      status.textContent = "Запрашиваем разрешение на список друзей...";
+
+      const auth = await vkBridge.send("VKWebAppGetAuthToken", {
+        app_id: APP_ID,
+        scope: "friends"
+      });
+
+      if (!auth || !auth.access_token) {
+        throw new Error("VK не выдал токен доступа.");
+      }
+
+      status.textContent = "Получаем список друзей...";
+
+      const result = await vkBridge.send("VKWebAppCallAPIMethod", {
+        method: "friends.get",
+        params: {
+          fields: "bdate,domain",
+          count: 5000
+        }
+      });
+
+      if (!result || !result.response) {
+        throw new Error("VK не вернул список друзей.");
+      }
+
+      const friends = result.response.items || [];
+
+      const withBirthday = friends.filter(friend => friend.bdate);
+
+      withBirthday.sort((a, b) => {
+        const aParts = a.bdate.split(".");
+        const bParts = b.bdate.split(".");
+
+        const aDay = Number(aParts[0]);
+        const aMonth = Number(aParts[1]);
+
+        const bDay = Number(bParts[0]);
+        const bMonth = Number(bParts[1]);
+
+        return (aMonth * 100 + aDay) - (bMonth * 100 + bDay);
+      });
+
+      status.innerHTML =
+        "Всего друзей: <b>" + friends.length + "</b><br>" +
+        "Даты рождения доступны: <b>" + withBirthday.length + "</b>";
+
+      if (withBirthday.length === 0) {
+        friendsBox.innerHTML =
+          "<p>VK не вернул ни одной доступной даты рождения.</p>";
+        return;
+      }
+
+      withBirthday.forEach(friend => {
+        const div = document.createElement("div");
+        div.className = "friend";
+
+        const profileUrl = friend.domain
+          ? "https://vk.ru/" + friend.domain
+          : "https://vk.ru/id" + friend.id;
+
+        div.innerHTML =
+          "<a href=\"" + profileUrl + "\" target=\"_blank\">" +
+          escapeHtml(friend.first_name + " " + friend.last_name) +
+          "</a>" +
+          " — <span class=\"date\">" +
+          escapeHtml(friend.bdate) +
+          "</span>";
+
+        friendsBox.appendChild(div);
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      status.innerHTML =
+        "<b>Не получилось подключиться к VK.</b><br>" +
+        "Ошибка: " +
+        escapeHtml(error.message || String(error));
+
+    } finally {
+      startButton.disabled = false;
+    }
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  startButton.addEventListener("click", start);
+</script>
+
+</body>
+</html>
