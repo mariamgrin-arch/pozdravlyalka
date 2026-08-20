@@ -127,6 +127,39 @@ button:disabled {
   color: #7650a8;
 }
 
+.search-box {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  border: 1px solid #dfe3e8;
+  background: #f7f8fa;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #447bba;
+  background: #fff;
+}
+
+.search-clear {
+  background: #f0f2f5;
+  color: #626d7a;
+  white-space: nowrap;
+}
+
+.search-results-count {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #626d7a;
+}
+
 .friend {
   padding: 13px 0;
   border-bottom: 1px solid #eee;
@@ -279,13 +312,6 @@ button:disabled {
   color: #626d7a;
 }
 
-.more {
-  width: 100%;
-  margin-top: 9px;
-  background: #f0f2f5;
-  color: #447bba;
-}
-
 .history-head {
   display: flex;
   justify-content: space-between;
@@ -336,6 +362,12 @@ button:disabled {
   line-height: 1.5;
 }
 
+.no-results {
+  padding: 15px 0 5px;
+  color: #818c99;
+  line-height: 1.5;
+}
+
 @media(max-width:600px) {
   body {
     padding: 9px;
@@ -363,6 +395,15 @@ button:disabled {
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .search-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-clear {
+    width: 100%;
+  }
 }
 </style>
 </head>
@@ -370,6 +411,8 @@ button:disabled {
 <body>
 
 <div class="box">
+
+  <!-- HEADER -->
 
   <div class="card">
 
@@ -402,6 +445,51 @@ button:disabled {
   </div>
 
 
+  <!-- SEARCH -->
+
+  <div
+    id="searchSection"
+    class="card"
+    style="display:none"
+  >
+
+    <h2 class="section-title blue">
+      🔎 Найти друга
+    </h2>
+
+    <div class="search-box">
+
+      <input
+        id="searchInput"
+        class="search-input"
+        type="text"
+        placeholder="Введите имя или фамилию..."
+        autocomplete="off"
+      >
+
+      <button
+        id="searchClear"
+        class="search-clear"
+        style="display:none"
+      >
+        Очистить
+      </button>
+
+    </div>
+
+    <div
+      id="searchResultsCount"
+      class="search-results-count"
+      style="display:none"
+    ></div>
+
+    <div id="searchResults"></div>
+
+  </div>
+
+
+  <!-- NOTICE -->
+
   <div id="notice" class="card notice">
 
     <div
@@ -413,6 +501,8 @@ button:disabled {
 
   </div>
 
+
+  <!-- TODAY -->
 
   <div
     id="todaySection"
@@ -429,6 +519,8 @@ button:disabled {
   </div>
 
 
+  <!-- SOON -->
+
   <div
     id="soonSection"
     class="card"
@@ -444,6 +536,8 @@ button:disabled {
   </div>
 
 
+  <!-- DONE TODAY -->
+
   <div
     id="doneSection"
     class="card"
@@ -458,6 +552,8 @@ button:disabled {
 
   </div>
 
+
+  <!-- STATS -->
 
   <div
     id="statsSection"
@@ -514,6 +610,8 @@ button:disabled {
   </div>
 
 
+  <!-- HISTORY -->
+
   <div
     id="historySection"
     class="card"
@@ -526,6 +624,7 @@ button:disabled {
         class="section-title purple"
         style="margin:0"
       >
+
         📚 История
 
         <span
@@ -558,16 +657,24 @@ button:disabled {
 
 <script>
 
+/* ===========================
+   НАСТРОЙКИ
+=========================== */
+
 const APP_ID = 54728607;
 
 const API_VERSION = "5.199";
 
 const FRIENDS_CACHE_KEY =
-  "pozdravlyalka_friends_cache_v4";
+  "pozdravlyalka_friends_cache_v5";
 
 const HISTORY_KEY_PREFIX =
   "pz_h_";
 
+
+/* ===========================
+   СОСТОЯНИЕ
+=========================== */
 
 let friends = [];
 
@@ -580,15 +687,22 @@ let selectedStyles = {};
 let currentUserId = null;
 
 
+/* ===========================
+   УТИЛИТА
+=========================== */
+
 const $ = id =>
   document.getElementById(id);
 
 
 /* ===========================
-   VK
+   VK BRIDGE
 =========================== */
 
-async function bridgeSend(method, params = {}) {
+async function bridgeSend(
+  method,
+  params = {}
+) {
 
   return await vkBridge.send(
     method,
@@ -597,6 +711,10 @@ async function bridgeSend(method, params = {}) {
 
 }
 
+
+/* ===========================
+   ИНИЦИАЛИЗАЦИЯ
+=========================== */
 
 async function init() {
 
@@ -634,11 +752,17 @@ async function init() {
 
       friends = cached;
 
+
       $("loadBtn").style.display =
         "none";
 
+
       $("refreshBtn").style.display =
         "inline-block";
+
+
+      $("searchSection").style.display =
+        "block";
 
 
       setStatus(
@@ -671,6 +795,10 @@ async function init() {
 }
 
 
+/* ===========================
+   ФОНОВОЕ ОБНОВЛЕНИЕ
+=========================== */
+
 async function backgroundRefresh() {
 
   try {
@@ -684,6 +812,7 @@ async function backgroundRefresh() {
       e
     );
 
+
     setStatus(
       "Показаны сохранённые данные. Фоновое обновление сейчас не удалось."
     );
@@ -694,7 +823,7 @@ async function backgroundRefresh() {
 
 
 /* ===========================
-   ДРУЗЬЯ
+   КЭШ ДРУЗЕЙ
 =========================== */
 
 function readFriendsCache() {
@@ -708,9 +837,14 @@ function readFriendsCache() {
         ) || "null"
       );
 
+
     return data &&
-      Array.isArray(data.friends)
+      Array.isArray(
+        data.friends
+      )
+
       ? data.friends
+
       : null;
 
   } catch (_) {
@@ -722,11 +856,14 @@ function readFriendsCache() {
 }
 
 
-function saveFriendsCache(list) {
+function saveFriendsCache(
+  list
+) {
 
   try {
 
     localStorage.setItem(
+
       FRIENDS_CACHE_KEY,
 
       JSON.stringify({
@@ -746,13 +883,19 @@ function saveFriendsCache(list) {
 }
 
 
+/* ===========================
+   ПОЛУЧЕНИЕ ДРУЗЕЙ VK
+=========================== */
+
 async function fetchFriends(
   background = false
 ) {
 
-  $("loadBtn").disabled = true;
+  $("loadBtn").disabled =
+    true;
 
-  $("refreshBtn").disabled = true;
+  $("refreshBtn").disabled =
+    true;
 
 
   if (!background) {
@@ -770,8 +913,13 @@ async function fetchFriends(
       await bridgeSend(
         "VKWebAppGetAuthToken",
         {
-          app_id: APP_ID,
-          scope: "friends"
+
+          app_id:
+            APP_ID,
+
+          scope:
+            "friends"
+
         }
       );
 
@@ -837,6 +985,20 @@ async function fetchFriends(
     }
 
 
+    /*
+      ВАЖНО:
+
+      friends полностью заменяется
+      свежим списком VK.
+
+      Поэтому человек, которого больше
+      нет в друзьях, автоматически
+      исчезает из приложения.
+
+      historyCache при этом НЕ меняется.
+      Поэтому история не удаляется.
+    */
+
     friends =
       result.response.items || [];
 
@@ -849,19 +1011,31 @@ async function fetchFriends(
     $("loadBtn").style.display =
       "none";
 
+
     $("refreshBtn").style.display =
       "inline-block";
+
+
+    $("searchSection").style.display =
+      "block";
 
 
     setStatus(
 
       (
         background
+
           ? "Данные автоматически обновлены. "
+
           : "Данные успешно обновлены. "
+
       ) +
 
-      "Последнее обновление: <b>" +
+      "Сейчас друзей: <b>" +
+
+      friends.length +
+
+      "</b>. Последнее обновление: <b>" +
 
       formatDateTime(
         new Date()
@@ -874,11 +1048,15 @@ async function fetchFriends(
 
     render();
 
+
   } finally {
 
-    $("loadBtn").disabled = false;
+    $("loadBtn").disabled =
+      false;
 
-    $("refreshBtn").disabled = false;
+
+    $("refreshBtn").disabled =
+      false;
 
   }
 
@@ -886,10 +1064,12 @@ async function fetchFriends(
 
 
 /* ===========================
-   ДАТЫ
+   ДАТЫ РОЖДЕНИЯ
 =========================== */
 
-function birthdayInfo(bdate) {
+function birthdayInfo(
+  bdate
+) {
 
   const p =
     bdate
@@ -900,8 +1080,10 @@ function birthdayInfo(bdate) {
   const day =
     p[0];
 
+
   const month =
     p[1];
+
 
   const birthYear =
     p.length >= 3
@@ -915,27 +1097,41 @@ function birthdayInfo(bdate) {
 
   const today =
     new Date(
+
       now.getFullYear(),
+
       now.getMonth(),
+
       now.getDate()
+
     );
 
 
   let date =
     new Date(
+
       now.getFullYear(),
+
       month - 1,
+
       day
+
     );
 
 
-  if (date < today) {
+  if (
+    date < today
+  ) {
 
     date =
       new Date(
+
         now.getFullYear() + 1,
+
         month - 1,
+
         day
+
       );
 
   }
@@ -943,31 +1139,52 @@ function birthdayInfo(bdate) {
 
   const days =
     Math.round(
-      (date - today) /
+
+      (
+        date -
+        today
+      ) /
+
       86400000
+
     );
 
 
   const age =
     birthYear
+
       ? date.getFullYear() -
         birthYear
+
       : null;
 
 
   return {
+
     day,
+
     month,
+
     birthYear,
+
     date,
+
     days,
+
     age
+
   };
 
 }
 
 
-function formatDate(info) {
+/* ===========================
+   ФОРМАТ ДАТЫ
+=========================== */
+
+function formatDate(
+  info
+) {
 
   const months = [
 
@@ -988,55 +1205,142 @@ function formatDate(info) {
 
 
   return (
+
     info.day +
+
     " " +
+
     months[
       info.month - 1
     ]
+
   );
 
 }
 
 
-function formatDateTime(d) {
+/* ===========================
+   ФОРМАТ ВОЗРАСТА
+=========================== */
+
+function birthdayMeta(
+  info
+) {
+
+  /*
+    Если VK дал год рождения —
+    показываем возраст.
+
+    Если года нет —
+    просто пишем "День рождения".
+  */
+
+  if (
+    info.age == null
+  ) {
+
+    return "🎂 День рождения";
+
+  }
+
+
+  return (
+
+    "🎂 " +
+
+    ageText(
+      info.age
+    )
+
+  );
+
+}
+
+
+/* ===========================
+   ВРЕМЯ
+=========================== */
+
+function formatDateTime(
+  d
+) {
 
   return d.toLocaleString(
+
     "ru-RU",
+
     {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
+
+      day:
+        "2-digit",
+
+      month:
+        "2-digit",
+
+      year:
+        "numeric",
+
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit"
+
     }
+
   );
 
 }
 
 
-function daysText(n) {
+/* ===========================
+   ТЕКСТ "ЧЕРЕЗ..."
+=========================== */
 
-  if (n === 1)
+function daysText(
+  n
+) {
+
+  if (
+    n === 1
+  )
     return "завтра";
 
-  if (n === 2)
+
+  if (
+    n === 2
+  )
     return "послезавтра";
 
 
   return (
+
     "через " +
+
     n +
+
     " " +
+
     plural(
+
       n,
+
       "день",
+
       "дня",
+
       "дней"
+
     )
+
   );
 
 }
 
+
+/* ===========================
+   МНОЖЕСТВЕННОЕ ЧИСЛО
+=========================== */
 
 function plural(
   n,
@@ -1047,6 +1351,7 @@ function plural(
 
   const a =
     n % 100;
+
 
   const b =
     n % 10;
@@ -1059,7 +1364,9 @@ function plural(
     return many;
 
 
-  if (b === 1)
+  if (
+    b === 1
+  )
     return one;
 
 
@@ -1075,21 +1382,32 @@ function plural(
 }
 
 
-function ageText(age) {
+/* ===========================
+   ВОЗРАСТ
+=========================== */
 
-  if (age == null)
-    return "дата рождения без года";
-
+function ageText(
+  age
+) {
 
   return (
+
     age +
+
     " " +
+
     plural(
+
       age,
+
       "год",
+
       "года",
+
       "лет"
+
     )
+
   );
 
 }
@@ -1108,11 +1426,19 @@ async function loadCloudHistory() {
 
     const keysResult =
       await bridgeSend(
+
         "VKWebAppStorageGetKeys",
+
         {
-          count: 1000,
-          offset: 0
+
+          count:
+            1000,
+
+          offset:
+            0
+
         }
+
       );
 
 
@@ -1122,10 +1448,14 @@ async function loadCloudHistory() {
 
     const historyKeys =
       keys.filter(
+
         k =>
-          String(k).startsWith(
-            HISTORY_KEY_PREFIX
-          )
+
+          String(k)
+            .startsWith(
+              HISTORY_KEY_PREFIX
+            )
+
       );
 
 
@@ -1137,11 +1467,16 @@ async function loadCloudHistory() {
 
     const result =
       await bridgeSend(
+
         "VKWebAppStorageGet",
+
         {
+
           keys:
             historyKeys
+
         }
+
       );
 
 
@@ -1150,7 +1485,9 @@ async function loadCloudHistory() {
       (result?.keys || [])
     ) {
 
-      if (!item.value)
+      if (
+        !item.value
+      )
         continue;
 
 
@@ -1159,6 +1496,7 @@ async function loadCloudHistory() {
         historyCache[
           item.key
         ] =
+
           JSON.parse(
             item.value
           );
@@ -1171,14 +1509,21 @@ async function loadCloudHistory() {
   } catch (e) {
 
     console.warn(
+
       "Историю VK Storage прочитать не удалось:",
+
       e
+
     );
 
   }
 
 }
 
+
+/* ===========================
+   СОХРАНИТЬ ИСТОРИЮ
+=========================== */
 
 async function saveHistoryEvent(
   friend,
@@ -1187,8 +1532,11 @@ async function saveHistoryEvent(
 
   const key =
     eventKey(
+
       friend,
+
       info
+
     );
 
 
@@ -1204,15 +1552,21 @@ async function saveHistoryEvent(
       friend.last_name,
 
     birthday:
+
       info.day +
+
       "." +
+
       info.month,
 
     birthdayYear:
+
       info.date.getFullYear(),
 
     markedAt:
-      new Date().toISOString()
+
+      new Date()
+        .toISOString()
 
   };
 
@@ -1224,27 +1578,41 @@ async function saveHistoryEvent(
   try {
 
     await bridgeSend(
+
       "VKWebAppStorageSet",
+
       {
+
         key,
+
         value:
+
           JSON.stringify(
             value
           )
+
       }
+
     );
 
   } catch (e) {
 
     console.warn(
+
       "VK Storage не сохранил историю:",
+
       e
+
     );
 
   }
 
 }
 
+
+/* ===========================
+   УДАЛИТЬ ОТМЕТКУ
+=========================== */
 
 async function deleteHistoryEvent(
   friend,
@@ -1253,8 +1621,11 @@ async function deleteHistoryEvent(
 
   const key =
     eventKey(
+
       friend,
+
       info
+
     );
 
 
@@ -1264,18 +1635,28 @@ async function deleteHistoryEvent(
   try {
 
     await bridgeSend(
+
       "VKWebAppStorageSet",
+
       {
+
         key,
-        value: ""
+
+        value:
+          ""
+
       }
+
     );
 
   } catch (e) {
 
     console.warn(
+
       "Не удалось убрать отметку:",
+
       e
+
     );
 
   }
@@ -1283,24 +1664,41 @@ async function deleteHistoryEvent(
 }
 
 
+/* ===========================
+   КЛЮЧ ИСТОРИИ
+=========================== */
+
 function eventKey(
   friend,
   info
 ) {
 
   return (
+
     HISTORY_KEY_PREFIX +
+
     friend.id +
+
     "_" +
+
     info.day +
+
     "_" +
+
     info.month +
+
     "_" +
+
     info.date.getFullYear()
+
   );
 
 }
 
+
+/* ===========================
+   ПРОВЕРКА "ПОЗДРАВИЛИ"
+=========================== */
 
 function isDone(
   friend,
@@ -1308,43 +1706,61 @@ function isDone(
 ) {
 
   return !!historyCache[
+
     eventKey(
+
       friend,
+
       info
+
     )
+
   ];
 
 }
 
 
 /* ===========================
-   ГЛАВНЫЙ РЕНДЕР
+   ОСНОВНОЙ РЕНДЕР
 =========================== */
 
 function render() {
 
   const prepared =
+
     friends
 
       .filter(
+
         f =>
           f.bdate
+
       )
 
       .map(
+
         f => ({
-          friend: f,
+
+          friend:
+            f,
+
           info:
             birthdayInfo(
               f.bdate
             )
+
         })
+
       )
 
       .sort(
+
         (a, b) =>
+
           a.info.days -
+
           b.info.days
+
       );
 
 
@@ -1352,13 +1768,16 @@ function render() {
     prepared
   );
 
+
   renderSoon(
     prepared
   );
 
+
   renderStats(
     prepared
   );
+
 
   renderHistory();
 
@@ -1374,70 +1793,108 @@ function renderToday(
 ) {
 
   const today =
+
     prepared.filter(
+
       x =>
+
         x.info.days === 0
+
     );
 
 
   const pending =
+
     today.filter(
+
       x =>
+
         !isDone(
+
           x.friend,
+
           x.info
+
         )
+
     );
 
 
   const done =
+
     today.filter(
+
       x =>
+
         isDone(
+
           x.friend,
+
           x.info
+
         )
+
     );
 
 
   $("todaySection")
     .style.display =
+
       pending.length
+
         ? "block"
+
         : "none";
 
 
   $("doneSection")
     .style.display =
+
       done.length
+
         ? "block"
+
         : "none";
 
 
   $("todayList")
-    .innerHTML = "";
+    .innerHTML =
+      "";
 
 
   $("doneList")
-    .innerHTML = "";
+    .innerHTML =
+      "";
 
 
-  if (!today.length) {
+  if (
+    !today.length
+  ) {
 
     showNotice(
+
       "empty",
+
       "☕ Сегодня никого поздравлять не нужно.",
+
       "Можно спокойно заниматься своими делами."
+
     );
 
   }
 
-  else if (!pending.length) {
+  else if (
+    !pending.length
+  ) {
 
     showNotice(
+
       "ok",
+
       "🎉 Все сегодняшние поздравления выполнены!",
+
       "Ты никого не забыла — можно спокойно заниматься своими делами. ❤️"
+
     );
 
   }
@@ -1445,37 +1902,59 @@ function renderToday(
   else {
 
     showNotice(
+
       "ok",
+
       "🎂 Сегодня есть именинники!",
+
       "Осталось поздравить: <b>" +
+
       pending.length +
+
       "</b>."
+
     );
 
 
     pending.forEach(
+
       x =>
+
         $("todayList")
           .appendChild(
+
             friendCard(
+
               x.friend,
+
               x.info
+
             )
+
           )
+
     );
 
   }
 
 
   done.forEach(
+
     x =>
+
       $("doneList")
         .appendChild(
+
           friendCard(
+
             x.friend,
+
             x.info
+
           )
+
         )
+
   );
 
 }
@@ -1490,33 +1969,50 @@ function renderSoon(
 ) {
 
   const soon =
+
     prepared.filter(
+
       x =>
+
         x.info.days >= 1 &&
+
         x.info.days <= 7
+
     );
 
 
   $("soonSection")
     .style.display =
+
       soon.length
+
         ? "block"
+
         : "none";
 
 
   $("soonList")
-    .innerHTML = "";
+    .innerHTML =
+      "";
 
 
   soon.forEach(
+
     x =>
+
       $("soonList")
         .appendChild(
+
           friendCard(
+
             x.friend,
+
             x.info
+
           )
+
         )
+
   );
 
 }
@@ -1552,13 +2048,21 @@ function renderStats(
 
   $("statDone")
     .textContent =
+
       Object
-        .values(historyCache)
+        .values(
+          historyCache
+        )
+
         .filter(
+
           x =>
+
             x.birthdayYear ===
             year
+
         )
+
         .length;
 
 }
@@ -1571,16 +2075,24 @@ function renderStats(
 function renderHistory() {
 
   const entries =
+
     Object
-      .values(historyCache)
+      .values(
+        historyCache
+      )
+
       .sort(
+
         (a, b) =>
+
           new Date(
             b.markedAt
           ) -
+
           new Date(
             a.markedAt
           )
+
       );
 
 
@@ -1595,14 +2107,22 @@ function renderHistory() {
 
 
   $("historyList")
-    .innerHTML = "";
+    .innerHTML =
+      "";
 
 
-  if (!entries.length) {
+  if (
+    !entries.length
+  ) {
 
     $("historyList")
       .innerHTML =
-        '<div class="empty">Пока здесь ничего нет.</div>';
+
+        '<div class="empty">' +
+
+        'Пока здесь ничего нет.' +
+
+        '</div>';
 
     return;
 
@@ -1610,6 +2130,7 @@ function renderHistory() {
 
 
   entries.forEach(
+
     e => {
 
       const div =
@@ -1629,12 +2150,17 @@ function renderHistory() {
         '✅ ' +
 
         esc(
+
           e.firstName +
+
           " " +
+
           e.lastName
+
         ) +
 
         '</div>' +
+
 
         '<div class="history-meta">' +
 
@@ -1656,13 +2182,25 @@ function renderHistory() {
 
           new Date(
             e.markedAt
-          ).toLocaleDateString(
+          )
+
+          .toLocaleDateString(
+
             "ru-RU",
+
             {
-              day: "numeric",
-              month: "long",
-              year: "numeric"
+
+              day:
+                "numeric",
+
+              month:
+                "long",
+
+              year:
+                "numeric"
+
             }
+
           )
 
         ) +
@@ -1676,6 +2214,7 @@ function renderHistory() {
         );
 
     }
+
   );
 
 }
@@ -1692,6 +2231,7 @@ function showNotice(
 ) {
 
   $("notice").className =
+
     "card notice show " +
     kind;
 
@@ -1708,57 +2248,6 @@ function showNotice(
 }
 
 
-function setStatus(
-  html
-) {
-
-  $("status").innerHTML =
-    html;
-
-}
-
-
-function showError(
-  title,
-  e
-) {
-
-  let text =
-    e?.error_data?.error_msg ||
-    e?.message ||
-    "";
-
-
-  if (!text) {
-
-    try {
-
-      text =
-        JSON.stringify(e);
-
-    } catch (_) {
-
-      text =
-        String(e);
-
-    }
-
-  }
-
-
-  setStatus(
-    "<b>" +
-    esc(title) +
-    "</b><br>" +
-    esc(
-      text ||
-      "Причина неизвестна."
-    )
-  );
-
-}
-
-
 /* ===========================
    КАРТОЧКА ДРУГА
 =========================== */
@@ -1769,13 +2258,18 @@ function friendCard(
 ) {
 
   const done =
+
     isDone(
+
       friend,
+
       info
+
     );
 
 
   const div =
+
     document.createElement(
       "div"
     );
@@ -1786,6 +2280,7 @@ function friendCard(
 
 
   const url =
+
     friend.domain
 
       ? "https://vk.ru/" +
@@ -1796,12 +2291,15 @@ function friendCard(
 
 
   const avatar =
+
     friend.photo_200
 
       ? '<img class="avatar" src="' +
+
         esc(
           friend.photo_200
         ) +
+
         '" alt="">'
 
       : '<div class="avatar"></div>';
@@ -1818,13 +2316,19 @@ function friendCard(
         '<div class="name">' +
 
           '<a target="_blank" href="' +
+
           esc(url) +
+
           '">' +
 
           esc(
+
             friend.first_name +
+
             " " +
+
             friend.last_name
+
           ) +
 
           '</a>' +
@@ -1835,9 +2339,9 @@ function friendCard(
 
           formatDate(info) +
 
-          ' · 🎂 ' +
+          ' · ' +
 
-          ageText(info.age) +
+          birthdayMeta(info) +
 
           '<br>' +
 
@@ -1845,14 +2349,20 @@ function friendCard(
 
             done
 
-              ? '<span class="done">✅ Уже поздравили</span>'
+              ? '<span class="done">' +
+
+                '✅ Уже поздравили' +
+
+                '</span>'
 
               : '<span class="when">' +
 
                 (
 
                   info.days === 0
+
                     ? "Сегодня 🎉"
+
                     : daysText(
                         info.days
                       )
@@ -1878,8 +2388,14 @@ function friendCard(
         !done
 
           ? '<button class="generate" onclick="toggleGenerator(' +
+
             friend.id +
-            ')">✨ Создать поздравление</button>'
+
+            ')">' +
+
+            '✨ Создать поздравление' +
+
+            '</button>'
 
           : ''
 
@@ -1891,12 +2407,24 @@ function friendCard(
         !done
 
           ? '<button class="dialog" onclick="openReadyDialog(' +
+
             friend.id +
-            ')">💬 Поздравить</button>'
+
+            ')">' +
+
+            '💬 Поздравить' +
+
+            '</button>'
 
           : '<button class="dialog" onclick="openDialogOnly(' +
+
             friend.id +
-            ')">💬 Открыть диалог</button>'
+
+            ')">' +
+
+            '💬 Открыть диалог' +
+
+            '</button>'
 
       ) +
 
@@ -1906,12 +2434,24 @@ function friendCard(
         !done
 
           ? '<button class="mark" onclick="markDone(' +
+
             friend.id +
-            ')">✅ Я поздравила</button>'
+
+            ')">' +
+
+            '✅ Я поздравила' +
+
+            '</button>'
 
           : '<button class="undo" onclick="undoDone(' +
+
             friend.id +
-            ')">↩ Отменить отметку</button>'
+
+            ')">' +
+
+            '↩ Отменить отметку' +
+
+            '</button>'
 
       ) +
 
@@ -1938,7 +2478,7 @@ function friendCard(
 
 
 /* ===========================
-   ТЕКСТЫ ПОЗДРАВЛЕНИЙ
+   ГЕНЕРАТОР
 =========================== */
 
 const styles = {
@@ -2041,18 +2581,16 @@ const styles = {
 };
 
 
-/* ===========================
-   ГЕНЕРАТОР
-=========================== */
-
 function generatorHtml(
   friend
 ) {
 
   const initialText =
+
     generatedMessages[
       friend.id
     ] ||
+
     makeGreeting(
       friend,
       "warm"
@@ -2070,6 +2608,7 @@ function generatorHtml(
     ] =
       initialText;
 
+
     selectedStyles[
       friend.id
     ] =
@@ -2078,8 +2617,12 @@ function generatorHtml(
   }
 
 
-  return '<div id="gen-' +
+  return (
+
+    '<div id="gen-' +
+
     friend.id +
+
     '" class="generator">' +
 
       '<b>✨ Какое поздравление сделать?</b>' +
@@ -2087,50 +2630,90 @@ function generatorHtml(
       '<div class="styles">' +
 
         Object.keys(styles)
-          .map(function(key) {
 
-            return '<button class="style ' +
-              (
-                selectedStyles[
-                  friend.id
-                ] === key
-                  ? 'active'
-                  : ''
-              ) +
-              '" onclick="chooseStyle(' +
-              friend.id +
-              ',\'' +
-              key +
-              '\',this)">' +
-              styles[key].label +
-              '</button>';
+          .map(
 
-          })
+            function(key) {
+
+              return (
+
+                '<button class="style ' +
+
+                (
+
+                  selectedStyles[
+                    friend.id
+                  ] === key
+
+                    ? 'active'
+
+                    : ''
+
+                ) +
+
+                '" onclick="chooseStyle(' +
+
+                friend.id +
+
+                ',\'' +
+
+                key +
+
+                '\',this)">' +
+
+                styles[key].label +
+
+                '</button>'
+
+              );
+
+            }
+
+          )
+
           .join("") +
 
       '</div>' +
 
       '<div id="msg-' +
+
       friend.id +
+
       '" class="message">' +
 
-        esc(initialText) +
+        esc(
+          initialText
+        ) +
 
       '</div>' +
 
       '<div class="actions">' +
 
         '<button class="primary" onclick="copyGreeting(' +
+
         friend.id +
-        ')">📋 Скопировать</button>' +
+
+        ')">' +
+
+        '📋 Скопировать' +
+
+        '</button>' +
 
         '<button class="secondary" onclick="anotherGreeting(' +
+
         friend.id +
-        ')">🎲 Другой вариант</button>' +
+
+        ')">' +
+
+        '🎲 Другой вариант' +
+
+        '</button>' +
 
       '</div>' +
 
-    '</div>';
+    '</div>'
+
+  );
 
 }
 
@@ -2147,13 +2730,22 @@ function makeGreeting(
 
 
   return arr[
+
     Math.floor(
+
       Math.random() *
       arr.length
+
     )
-  ].replace(
+
+  ]
+
+  .replace(
+
     "{name}",
+
     friend.first_name
+
   );
 
 }
@@ -2186,8 +2778,10 @@ function chooseStyle(
 
   const friend =
     friends.find(
+
       f =>
         f.id === id
+
     );
 
 
@@ -2221,11 +2815,14 @@ function chooseStyle(
     .querySelectorAll(
       ".style"
     )
+
     .forEach(
+
       x =>
         x.classList.remove(
           "active"
         )
+
     );
 
 
@@ -2242,8 +2839,10 @@ function anotherGreeting(
 
   const friend =
     friends.find(
+
       f =>
         f.id === id
+
     );
 
 
@@ -2287,20 +2886,28 @@ async function copyText(
   try {
 
     await bridgeSend(
+
       "VKWebAppCopyText",
+
       {
         text
       }
+
     );
+
 
     return true;
 
   } catch (_) {
 
+
     try {
 
       await navigator.clipboard
-        .writeText(text);
+        .writeText(
+          text
+        );
+
 
       return true;
 
@@ -2319,11 +2926,14 @@ async function copyGreeting(
 ) {
 
   const text =
+
     generatedMessages[
       id
     ] ||
+
     $("msg-" + id)
       ?.textContent ||
+
     "";
 
 
@@ -2336,7 +2946,9 @@ async function copyGreeting(
   if (ok) {
 
     setStatus(
+
       "💌 Поздравление скопировано. Можно вставить его в диалог VK."
+
     );
 
   }
@@ -2345,7 +2957,7 @@ async function copyGreeting(
 
 
 /* ===========================
-   ПОЗДРАВИТЬ
+   КНОПКА "ПОЗДРАВИТЬ"
 =========================== */
 
 async function openReadyDialog(
@@ -2354,8 +2966,10 @@ async function openReadyDialog(
 
   const friend =
     friends.find(
+
       f =>
         f.id === id
+
     );
 
 
@@ -2364,15 +2978,18 @@ async function openReadyDialog(
 
 
   /*
-    Если пользователь уже создавал
+    Если пользователь уже создал
     поздравление — используем именно его.
-    Если нет — создаём обычное.
+
+    Если нет — создаём стандартное.
   */
 
   const text =
+
     generatedMessages[
       id
     ] ||
+
     makeGreeting(
       friend,
       "warm"
@@ -2392,7 +3009,9 @@ async function openReadyDialog(
 
 
   const url =
+
     "https://vk.ru/im?sel=" +
+
     friend.id;
 
 
@@ -2435,19 +3054,16 @@ async function openReadyDialog(
 }
 
 
-/*
-  Для человека, которого уже поздравили,
-  оставляем просто открытие диалога.
-*/
-
 function openDialogOnly(
   id
 ) {
 
   const friend =
     friends.find(
+
       f =>
         f.id === id
+
     );
 
 
@@ -2456,16 +3072,20 @@ function openDialogOnly(
 
 
   window.open(
+
     "https://vk.ru/im?sel=" +
+
     friend.id,
+
     "_blank"
+
   );
 
 }
 
 
 /* ===========================
-   ОТМЕТКА
+   ОТМЕТКА "Я ПОЗДРАВИЛА"
 =========================== */
 
 async function markDone(
@@ -2474,8 +3094,10 @@ async function markDone(
 
   const friend =
     friends.find(
+
       f =>
         f.id === id
+
     );
 
 
@@ -2498,13 +3120,6 @@ async function markDone(
   );
 
 
-  /*
-    Здесь специально НЕТ автоматической
-    отметки после кнопки "Поздравить".
-    Только после "Я поздравила".
-  */
-
-
   render();
 
 }
@@ -2516,8 +3131,10 @@ async function undoDone(
 
   const friend =
     friends.find(
+
       f =>
         f.id === id
+
     );
 
 
@@ -2529,10 +3146,13 @@ async function undoDone(
 
 
   await deleteHistoryEvent(
+
     friend,
+
     birthdayInfo(
       friend.bdate
     )
+
   );
 
 
@@ -2542,28 +3162,352 @@ async function undoDone(
 
 
 /* ===========================
-   КНОПКИ
+   ПОИСК
+=========================== */
+
+function searchFriends(
+  query
+) {
+
+  const normalized =
+    query
+      .trim()
+      .toLowerCase();
+
+
+  if (!normalized) {
+
+    $("searchResults")
+      .innerHTML =
+        "";
+
+
+    $("searchResultsCount")
+      .style.display =
+        "none";
+
+
+    $("searchClear")
+      .style.display =
+        "none";
+
+
+    return;
+
+  }
+
+
+  $("searchClear")
+    .style.display =
+      "block";
+
+
+  const results =
+    friends.filter(
+
+      friend => {
+
+        const fullName =
+
+          (
+
+            friend.first_name +
+            " " +
+            friend.last_name
+
+          )
+
+          .toLowerCase();
+
+
+        return fullName
+          .includes(
+            normalized
+          );
+
+      }
+
+    );
+
+
+  $("searchResults")
+    .innerHTML =
+      "";
+
+
+  $("searchResultsCount")
+    .style.display =
+      "block";
+
+
+  $("searchResultsCount")
+    .textContent =
+
+    "Найдено: " +
+
+    results.length;
+
+
+  if (!results.length) {
+
+    $("searchResults")
+      .innerHTML =
+
+        '<div class="no-results">' +
+
+        '😔 Никого не нашли. Попробуй проверить написание имени или фамилии.' +
+
+        '</div>';
+
+    return;
+
+  }
+
+
+  results.forEach(
+
+    friend => {
+
+      if (!friend.bdate) {
+
+        const fakeInfo = {
+
+          day: null,
+
+          month: null,
+
+          birthYear: null,
+
+          date: null,
+
+          days: null,
+
+          age: null
+
+        };
+
+
+        $("searchResults")
+          .appendChild(
+
+            friendCardWithoutBirthday(
+              friend
+            )
+
+          );
+
+      } else {
+
+        $("searchResults")
+          .appendChild(
+
+            friendCard(
+
+              friend,
+
+              birthdayInfo(
+                friend.bdate
+              )
+
+            )
+
+          );
+
+      }
+
+    }
+
+  );
+
+}
+
+
+function friendCardWithoutBirthday(
+  friend
+) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+
+  div.className =
+    "friend";
+
+
+  const url =
+
+    friend.domain
+
+      ? "https://vk.ru/" +
+        friend.domain
+
+      : "https://vk.ru/id" +
+        friend.id;
+
+
+  const avatar =
+
+    friend.photo_200
+
+      ? '<img class="avatar" src="' +
+
+        esc(
+          friend.photo_200
+        ) +
+
+        '" alt="">'
+
+      : '<div class="avatar"></div>';
+
+
+  div.innerHTML =
+
+    '<div class="friend-row">' +
+
+      avatar +
+
+      '<div class="info">' +
+
+        '<div class="name">' +
+
+          '<a target="_blank" href="' +
+
+          esc(url) +
+
+          '">' +
+
+          esc(
+
+            friend.first_name +
+
+            " " +
+
+            friend.last_name
+
+          ) +
+
+          '</a>' +
+
+        '</div>' +
+
+        '<div class="meta">' +
+
+          '🎂 Дата рождения не указана' +
+
+        '</div>' +
+
+      '</div>' +
+
+    '</div>' +
+
+
+    '<div class="row-actions">' +
+
+      '<button class="dialog" onclick="openDialogOnly(' +
+
+      friend.id +
+
+      ')">' +
+
+      '💬 Открыть диалог' +
+
+      '</button>' +
+
+    '</div>';
+
+
+  return div;
+
+}
+
+
+/* ===========================
+   КНОПКИ ПОИСКА
+=========================== */
+
+$("searchInput")
+  .addEventListener(
+
+    "input",
+
+    function() {
+
+      searchFriends(
+        this.value
+      );
+
+    }
+
+  );
+
+
+$("searchClear")
+  .addEventListener(
+
+    "click",
+
+    function() {
+
+      $("searchInput")
+        .value =
+          "";
+
+
+      $("searchResults")
+        .innerHTML =
+          "";
+
+
+      $("searchResultsCount")
+        .style.display =
+          "none";
+
+
+      this.style.display =
+        "none";
+
+
+      $("searchInput")
+        .focus();
+
+    }
+
+  );
+
+
+/* ===========================
+   КНОПКИ ПРИЛОЖЕНИЯ
 =========================== */
 
 $("loadBtn")
   .addEventListener(
+
     "click",
+
     () =>
       fetchFriends(false)
+
   );
 
 
 $("refreshBtn")
   .addEventListener(
+
     "click",
+
     () =>
       fetchFriends(false)
+
   );
 
 
 $("historyToggle")
   .addEventListener(
+
     "click",
+
     () => {
 
       $("historyList")
@@ -2584,8 +3528,13 @@ $("historyToggle")
           : "Показать";
 
     }
+
   );
 
+
+/* ===========================
+   ЭКРАНИРОВАНИЕ HTML
+=========================== */
 
 function esc(
   text
@@ -2622,6 +3571,10 @@ function esc(
 
 }
 
+
+/* ===========================
+   ЗАПУСК
+=========================== */
 
 init();
 
