@@ -210,15 +210,14 @@ const APP_ID = 54728607;
 
 const API_VERSION = "5.199";
 
-const FRIENDS_CACHE_KEY =
-  "pozdravlyalka_friends_cache_v4";
+const FRIENDS_CACHE_KEY_PREFIX =
+  "pozdravlyalka_friends_cache_v4_";
+
+const BIRTHDAY_RESERVE_KEY_PREFIX =
+  "pozdravlyalka_birthday_reserve_v1_";
 
 const HISTORY_KEY_PREFIX =
   "pz_h_";
-
-const BIRTHDAY_RESERVE_KEY =
-  "pozdravlyalka_birthday_reserve_v1";
-
 
 let friends = [];
 
@@ -428,7 +427,7 @@ function saveFriendsCache(list) {
   try {
 
     localStorage.setItem(
-      FRIENDS_CACHE_KEY,
+      friendsCacheKey(),
 
       JSON.stringify({
 
@@ -607,7 +606,7 @@ function loadBirthdayReserve() {
 function saveBirthdayReserve() {
   try {
     localStorage.setItem(
-      BIRTHDAY_RESERVE_KEY,
+      birthdayReserveKey(),
       JSON.stringify(
         birthdayReserve
       )
